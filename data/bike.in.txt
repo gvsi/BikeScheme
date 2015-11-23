@@ -1,0 +1,4 @@
+1 07:00, HubTerminal, ht, addDStation, A,   0,   0, 5;
+1 07:00, HubTerminal, ht, addDStation, B, 400, 300, 3;
+2 08:00, DSTouchScreen, A.ts, startReg, Alice;
+2 08:01, CardReader, A.cr, checkCard, Alice-card-auth;
