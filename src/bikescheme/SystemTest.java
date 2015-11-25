@@ -92,6 +92,11 @@ public class SystemTest {
         input ("2 08:01, CardReader, A.cr, checkCard, Alice-card-auth");
         expect("2 08:01, KeyIssuer, A.ki, keyIssued, A.ki-1");
 
+        input ("2 08:02, DSTouchScreen, A.ts, startReg, Bob");
+        expect("2 08:02, CardReader, A.cr, enterCardAndPin");
+        input ("2 08:03, CardReader, A.cr, checkCard, Bob-card-auth");
+        expect("2 08:03, KeyIssuer, A.ki, keyIssued, A.ki-2");
+
     }
     /**
      *  Run a show high/low occupancy test.

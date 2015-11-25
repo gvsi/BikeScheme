@@ -19,7 +19,8 @@ public class DPoint implements KeyInsertionObserver {
     private OKLight okLight;
     private String instanceName;
     private int index;
- 
+    private Bike currentBike;
+
     /**
      * 
      * Construct a Docking Point object with a key reader and green ok light
@@ -38,6 +39,7 @@ public class DPoint implements KeyInsertionObserver {
         okLight = new OKLight(instanceName + ".ok");
         this.instanceName = instanceName;
         this.index = index;
+        this.currentBike = null;
     }
        
     public void setDistributor(EventDistributor d) {

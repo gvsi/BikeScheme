@@ -2,7 +2,7 @@ package bikescheme;
 
 public class User {
 
-    static int userNum = 0;
+    static int userNum = 1;
 
     private int userId;
     private String name;

@@ -13,8 +13,8 @@ package bikescheme;
 public class HubTerminal extends AbstractIODevice {
 
     /**
-     * 
-     * @param instanceName  
+     *
+     * @param instanceName
      */
     public HubTerminal(String instanceName) {
         super(instanceName);   
@@ -36,7 +36,7 @@ public class HubTerminal extends AbstractIODevice {
     @Override
     public void receiveEvent(Event e) {
         
-        if (e.getMessageName().equals("addDStation") 
+        if (e.getMessageName().equals("addDStation")
                 && e.getMessageArgs().size() == 4) {
             
             String instanceName = e.getMessageArgs().get(0);
@@ -67,6 +67,5 @@ public class HubTerminal extends AbstractIODevice {
     
     // Insert here support for operations generating output on the 
     // touch screen display.
-    
-   
+
 }
