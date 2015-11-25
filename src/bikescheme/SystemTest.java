@@ -91,7 +91,7 @@ public class SystemTest {
         expect("2 08:00, CardReader, A.cr, enterCardAndPin");
         input ("2 08:01, CardReader, A.cr, checkCard, Alice-card-auth");
         expect("2 08:01, KeyIssuer, A.ki, keyIssued, A.ki-1");
-        
+
     }
     /**
      *  Run a show high/low occupancy test.

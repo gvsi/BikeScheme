@@ -73,10 +73,8 @@ public class CardReader extends AbstractIODevice {
                         messageName);
         return messageArgs.get(0);
     }
-  
-    
-    
-    
+
+
     /**
      * A single method combining the above operations of requesting and 
      * checking a card.
@@ -87,5 +85,4 @@ public class CardReader extends AbstractIODevice {
         requestCard();
         return checkCard();
     }
-
 }

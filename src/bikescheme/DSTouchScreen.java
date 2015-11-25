@@ -121,7 +121,6 @@ public class DSTouchScreen extends AbstractIODevice {
                 deviceInstance,
                 messageName,
                 valueList));
-        
     }
 
     /* 

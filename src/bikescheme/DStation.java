@@ -25,7 +25,8 @@ public class DStation implements StartRegObserver {
     private CardReader cardReader; 
     private KeyIssuer keyIssuer;
     private List<DPoint> dockingPoints;
- 
+
+    private Hub hub;
     /**
      * 
      * Construct a Docking Station object with touch screen, card reader
@@ -41,14 +42,16 @@ public class DStation implements StartRegObserver {
             String instanceName,
             int eastPos,
             int northPos,
-            int numPoints) {
+            int numPoints,
+            Hub hub) {
         
      // Construct and make connections with interface devices
         
         this.instanceName = instanceName;
         this.eastPos = eastPos;
         this.northPos = northPos;
-        
+        this.hub = hub;
+
         touchScreen = new DSTouchScreen(instanceName + ".ts");
         touchScreen.setObserver(this);
         
@@ -91,15 +94,15 @@ public class DStation implements StartRegObserver {
      * @param personalInfo
      */
     public void startRegReceived(String personalInfo) {
-        logger.fine("Starting on instance " + getInstanceName());
-        
-        cardReader.requestCard();  // Generate output event
-        logger.fine("At position 1 on instance " + getInstanceName());
-        
-        cardReader.checkCard();    // Pull in non-triggering input event
-        logger.fine("At position 2 on instance " + getInstanceName());
-        
-        keyIssuer.issueKey(); // Generate output event
+        logger.fine("Starting registration of " + personalInfo + " on instance " + getInstanceName());
+
+        String authCode = cardReader.readCard();    // Pull in non-triggering input event
+        logger.fine("Read card with authCode: " + authCode);
+
+        String keyId = keyIssuer.issueKey(); // Generate output event
+        logger.fine("Issued key with id: " + keyId);
+
+        hub.registerUser(personalInfo, keyId, authCode);
     }
     
     public String getInstanceName() {

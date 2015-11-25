@@ -41,7 +41,7 @@ public class KeyIssuer extends AbstractOutputDevice {
                 deviceInstance,
                 messageName,
                 valueList));
-        
+
         return newKeyId;
         
     }

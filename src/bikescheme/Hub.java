@@ -3,10 +3,7 @@
  */
 package bikescheme;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Logger;
 
 /**
@@ -23,6 +20,8 @@ public class Hub implements AddDStationObserver {
     private HubTerminal terminal;
     private HubDisplay display;
     private Map<String,DStation> dockingStationMap;
+    private ArrayList<User> userList;
+    private ArrayList<Key> keyList;
     
     /**
      * 
@@ -32,7 +31,6 @@ public class Hub implements AddDStationObserver {
      * Schedule update of the hub wall display every 5 minutes with
      * docking station occupancy data.
      * 
-     * @param instanceName
      */
     public Hub() {
 
@@ -41,7 +39,9 @@ public class Hub implements AddDStationObserver {
         terminal.setObserver(this);
         display = new HubDisplay("hd");
         dockingStationMap = new HashMap<String,DStation>();
-        
+        userList = new ArrayList<>();
+        keyList = new ArrayList<>();
+
         // Schedule timed notification for generating updates of 
         // hub display. 
 
@@ -87,7 +87,14 @@ public class Hub implements AddDStationObserver {
         display.setCollector(c); 
         terminal.setCollector(c);
     }
-    
+
+    public void registerUser(String name, String keyId, String authCode) {
+        userList.add(new User(name, keyId, authCode));
+        keyList.add(new Key(keyId));
+        logger.fine(""+userList.get(userList.size()-1).getUserId());
+        logger.fine(""+keyList.get(keyList.size()-1).getKeyId());
+        logger.fine("Added user " + name + " and key with id " + keyId + " to the system");
+    }
 
     /**
      * 
@@ -101,7 +108,7 @@ public class Hub implements AddDStationObserver {
         logger.fine("");
         
         DStation newDStation = 
-                new DStation(instanceName, eastPos, northPos, numPoints);
+                new DStation(instanceName, eastPos, northPos, numPoints, this);
         dockingStationMap.put(instanceName, newDStation);
         
         // Now connect up DStation to event distributor and collector.
@@ -116,6 +123,4 @@ public class Hub implements AddDStationObserver {
     public DStation getDStation(String instanceName) {
         return dockingStationMap.get(instanceName);
     }
- 
-
 }
