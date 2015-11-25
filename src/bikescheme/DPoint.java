@@ -48,7 +48,10 @@ public class DPoint implements KeyInsertionObserver {
     
     public void setCollector(EventCollector c) {
         okLight.setCollector(c);
-        
+    }
+
+    public boolean isOccupied() {
+        return currentBike != null;
     }
     
     public String getInstanceName() {

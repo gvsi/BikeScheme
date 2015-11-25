@@ -63,13 +63,13 @@ public class Hub implements AddDStationObserver {
                         for (String key : dockingStationMap.keySet()) {
 
                             String status = "";
-                            if(dockingStationMap.get(key).getOccupied()/dockingStationMap.get(key).getDPointCount() < 0.15){
-                                status = "HIGH";
-                            }else if(dockingStationMap.get(key).getOccupied()/dockingStationMap.get(key).getDPointCount() > 0.85){
+                            if((float)dockingStationMap.get(key).getOccupied()/dockingStationMap.get(key).getDPointCount() < 0.15){
                                 status = "LOW";
+                            }else if((float)dockingStationMap.get(key).getOccupied()/dockingStationMap.get(key).getDPointCount() > 0.85){
+                                status = "HIGH";
                             }
 
-                            if(status != "") {
+                            if(status.length() > 0) {
                                 occupancyArray.add(key);
                                 occupancyArray.add((Integer.toString(dockingStationMap.get(key).getEastPos())));
                                 occupancyArray.add((Integer.toString(dockingStationMap.get(key).getNorthPos())));

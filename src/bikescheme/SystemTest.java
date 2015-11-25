@@ -68,8 +68,8 @@ public class SystemTest {
      *   
      */
     public void setupDemoSystemConfig() {
-        input("1 07:00, HubTerminal, ht, addDStation, A,   0,   0, 5");
-        input("1 07:00, HubTerminal, ht, addDStation, B, 400, 300, 3");
+        input("1 07:00, HubTerminal, ht, addDStation, A,   0,   0, 20");
+        input("1 07:00, HubTerminal, ht, addDStation, B, 400, 300, 50");
     }
 
     /**
@@ -117,8 +117,8 @@ public class SystemTest {
         input ("2 08:02, Clock, clk, tick");
         expect("2 08:00, HubDisplay, hd, viewOccupancy, unordered-tuples, 6,"
              + "DSName, East, North, Status, #Occupied, #DPoints,"
-             + "     A,  100,   200,   HIGH,        19,       20," 
-             + "     B,  300,  -500,    LOW,         1,       50");
+             + "     A,    0,    0,    LOW,        0,       20,"
+             + "     B,  400,  300,    LOW,        0,       50");
     }
     
     /**

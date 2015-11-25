@@ -108,7 +108,16 @@ public class DStation implements StartRegObserver {
     public int getDPointCount(){
         return dockingPoints.size();
     }
-    
+
+    public int getOccupied() {
+        int i = 0;
+        for (DPoint dp : dockingPoints) {
+            if (dp.isOccupied())
+                i++;
+        }
+        return i;
+    }
+
     public String getInstanceName() {
         return instanceName;
     }
