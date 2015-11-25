@@ -104,6 +104,10 @@ public class DStation implements StartRegObserver {
 
         hub.registerUser(personalInfo, keyId, authCode);
     }
+
+    public int getDPointCount(){
+        return dockingPoints.size();
+    }
     
     public String getInstanceName() {
         return instanceName;

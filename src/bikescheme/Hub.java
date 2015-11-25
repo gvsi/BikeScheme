@@ -58,13 +58,28 @@ public class Hub implements AddDStationObserver {
                     public void processTimedNotification() {
                         logger.fine("");
 
-                        String[] occupancyArray = 
-                                // "DSName","East","North","Status","#Occupied","#DPoints"
-                            {  "A",      "100",  "200",  "HIGH",       "19",     "20",
-                               "B",      "300", "-500",   "LOW",        "1",     "50" };
+                        ArrayList<String> occupancyArray = new ArrayList<>();
 
-                        List<String> occupancyData = Arrays.asList(occupancyArray);
-                        display.showOccupancy(occupancyData);
+                        for (String key : dockingStationMap.keySet()) {
+
+                            String status = "";
+                            if(dockingStationMap.get(key).getOccupied()/dockingStationMap.get(key).getDPointCount() < 0.15){
+                                status = "HIGH";
+                            }else if(dockingStationMap.get(key).getOccupied()/dockingStationMap.get(key).getDPointCount() > 0.85){
+                                status = "LOW";
+                            }
+
+                            if(status != "") {
+                                occupancyArray.add(key);
+                                occupancyArray.add((Integer.toString(dockingStationMap.get(key).getEastPos())));
+                                occupancyArray.add((Integer.toString(dockingStationMap.get(key).getNorthPos())));
+                                occupancyArray.add(status);
+                                occupancyArray.add((Integer.toString(dockingStationMap.get(key).getOccupied())));
+                                occupancyArray.add((Integer.toString(dockingStationMap.get(key).getDPointCount())));
+                            }
+                        }
+
+                        display.showOccupancy(occupancyArray);
                     }
 
                 },
