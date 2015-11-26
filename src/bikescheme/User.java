@@ -29,6 +29,10 @@ public class User {
         return authCode;
     }
 
+    public String getName() {
+        return name;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof User) {

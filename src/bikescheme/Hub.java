@@ -16,7 +16,7 @@ import java.util.logging.Logger;
  * @author pbj
  *
  */
-public class Hub implements AddDStationObserver {
+public class Hub implements HubInterface, AddDStationObserver {
     public static final Logger logger = Logger.getLogger("bikescheme");
 
     private HubTerminal terminal;
@@ -112,6 +112,9 @@ public class Hub implements AddDStationObserver {
         terminal.setCollector(c);
     }
 
+    /**
+     * Registers a new user into the scheme
+     */
     public void registerUser(String name, String keyId, String authCode) {
         Key key = new Key(keyId);
         keyList.add(key);
@@ -121,7 +124,7 @@ public class Hub implements AddDStationObserver {
     }
 
     /**
-     * 
+     * Add a DStation to the system
      */
     @Override
     public void addDStation(
@@ -143,6 +146,9 @@ public class Hub implements AddDStationObserver {
         newDStation.setCollector(c);
     }
 
+    /**
+     * Handles a docked bike trigger (either AddBike or HireBike).
+     */
     public Bike handleDockedBike(String bikeId) {
         logger.fine("Checking if bike with id " + bikeId + " exists.");
 
@@ -159,6 +165,7 @@ public class Hub implements AddDStationObserver {
         return addBike(bikeId);
     }
 
+
     private void endTrip(Bike bike) {
         //TODO
         // Return a bike code
@@ -174,34 +181,50 @@ public class Hub implements AddDStationObserver {
         return newBike;
     }
 
+    /**
+     * Creates a new TripRecord.
+     */
     public boolean startHire(Bike bike, DStation dStation, String keyId) {
+
         Key key = new Key(keyId);
-        User user = getUser(key);
+        User user = getUser (key);
 
         if (user != null && !userHasActiveHire(user)) {
+            logger.fine("Creating new trip record.");
             TripRecord tr = new TripRecord(bike, user, dStation);
             return true;
         }
         return false;
     }
 
+    /**
+     * Gets the owner User of a key.
+     */
     private User getUser(Key key) {
-        logger.fine("Expected key " + key.getKeyId());
+        logger.fine("Finding user with key with keyId " + key.getKeyId() + "...");
+
         for (User u : userList) {
-            logger.fine("User found with keyId " + u.getKey().getKeyId());
             if (u.getKey().equals(key)) {
+                logger.fine("Found! Key with id " + key.getKeyId() + " belongs to " + u.getName() + ".");
                 return u;
             }
         }
+        logger.fine("No user found");
         return null;
     }
 
+    /**
+     * Checks whether a User has active hires.
+     */
     private boolean userHasActiveHire(User u) {
+        logger.fine("Checking whether user " + u.getName() + "has active hires or not!");
         for (TripRecord t : tripRecordsList) {
             if (t.getUser().equals(u) && t.isActive()) {
+                logger.fine("User has active hires!");
                 return true;
             }
         }
+        logger.fine("User does not have active hires!");
         return false;
     }
 
