@@ -17,4 +17,14 @@ public class Key {
     public String getKeyId() {
         return keyId;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Key) {
+            Key k = (Key) obj;
+            return this.keyId.equals(k.getKeyId());
+        }
+
+        return false;
+    }
 }

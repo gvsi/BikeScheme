@@ -103,6 +103,6 @@ public class DPoint implements KeyInsertionObserver, BikeDockingObserver {
     @Override
     public void bikeDocked(String bikeId) {
         this.currentBike = dStation.handleDockedBike(bikeId);
-
+        bikeLock.lock();
     }
 }

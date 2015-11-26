@@ -172,6 +172,7 @@ public class Hub implements AddDStationObserver {
     public boolean startHire(Bike bike, DStation dStation, String keyId) {
         Key key = new Key(keyId);
         User user = getUser(key);
+
         if (user != null && !userHasActiveHire(user)) {
             TripRecord tr = new TripRecord(bike, user, dStation);
             return true;
@@ -180,7 +181,9 @@ public class Hub implements AddDStationObserver {
     }
 
     private User getUser(Key key) {
+        logger.fine("Expected key " + key.getKeyId());
         for (User u : userList) {
+            logger.fine("User found with keyId " + u.getKey().getKeyId());
             if (u.getKey().equals(key)) {
                 return u;
             }

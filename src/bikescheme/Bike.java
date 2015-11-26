@@ -4,13 +4,12 @@ package bikescheme;
  * Created by gvsi on 25/11/2015.
  */
 public class Bike {
-    static int bikeNum = 1;
 
     private String bikeId;
 
-    public Bike() {
-        this.bikeId = Integer.toString(bikeNum);
-        bikeNum++;
+    public Bike(String bikeId) {
+        this.bikeId = bikeId;
+
     }
 
     public String getBikeId() {

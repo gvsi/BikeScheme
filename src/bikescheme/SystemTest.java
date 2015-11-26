@@ -70,8 +70,14 @@ public class SystemTest {
     public void setupDemoSystemConfig() {
         input("1 07:00, HubTerminal, ht, addDStation, A,   0,   0, 20");
         input("1 07:00, HubTerminal, ht, addDStation, B, 400, 300, 50");
-        input ("2 09:30, BikeSensor, B.2.bs, dockBike, bike-1");
-        //input ("2 09:30, KeyReader, B.2.kr, insertKey, key-2");
+
+        input ("2 08:00, DSTouchScreen, A.ts, startReg, Alice");
+        expect("2 08:00, CardReader, A.cr, enterCardAndPin");
+        input ("2 08:01, CardReader, A.cr, checkCard, Alice-card-auth");
+        expect("2 08:01, KeyIssuer, A.ki, keyIssued, A.ki-1");
+
+        input ("1 09:30, BikeSensor, B.2.bs, dockBike, bike-1");
+        expect ("1 09:30, BikeLock, B.2.bl, locked");
     }
 
     /**
@@ -92,12 +98,12 @@ public class SystemTest {
         input ("2 08:00, DSTouchScreen, A.ts, startReg, Alice");
         expect("2 08:00, CardReader, A.cr, enterCardAndPin");
         input ("2 08:01, CardReader, A.cr, checkCard, Alice-card-auth");
-        expect("2 08:01, KeyIssuer, A.ki, keyIssued, A.ki-1");
+        expect("2 08:01, KeyIssuer, A.ki, keyIssued, A.ki-2");
 
         input ("2 08:02, DSTouchScreen, A.ts, startReg, Bob");
         expect("2 08:02, CardReader, A.cr, enterCardAndPin");
         input ("2 08:03, CardReader, A.cr, checkCard, Bob-card-auth");
-        expect("2 08:03, KeyIssuer, A.ki, keyIssued, A.ki-2");
+        expect("2 08:03, KeyIssuer, A.ki, keyIssued, A.ki-3");
 
     }
     /**
@@ -120,7 +126,7 @@ public class SystemTest {
         expect("2 08:00, HubDisplay, hd, viewOccupancy, unordered-tuples, 6,"
              + "DSName, East, North, Status, #Occupied, #DPoints,"
              + "     A,    0,    0,    LOW,        0,       20,"
-             + "     B,  400,  300,    LOW,        0,       50");
+             + "     B,  400,  300,    LOW,        1,       50");
     }
     
     /**
@@ -134,7 +140,8 @@ public class SystemTest {
         
         setupDemoSystemConfig();
         
-        input ("2 09:30, KeyReader, B.2.kr, insertKey, key-2");
+        input ("2 09:30, KeyReader, B.2.kr, insertKey, A.ki-1");
+        expect("2 09:30, BikeLock,   B.2.bl, unlocked");
         expect("2 09:30, OKLight,   B.2.ok, flashed");
     }
 
