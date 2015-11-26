@@ -170,10 +170,12 @@ public class Hub implements AddDStationObserver {
     }
 
     public boolean startHire(Bike bike, DStation dStation, String keyId) {
+
         Key key = new Key(keyId);
         User user = getUser(key);
 
         if (user != null && !userHasActiveHire(user)) {
+            logger.fine("Creating new trip record.");
             TripRecord tr = new TripRecord(bike, user, dStation);
             return true;
         }
@@ -181,22 +183,27 @@ public class Hub implements AddDStationObserver {
     }
 
     private User getUser(Key key) {
-        logger.fine("Expected key " + key.getKeyId());
+        logger.fine("Finding user with key with keyId " + key.getKeyId() + "...");
+
         for (User u : userList) {
-            logger.fine("User found with keyId " + u.getKey().getKeyId());
             if (u.getKey().equals(key)) {
+                logger.fine("Found! Key with id " + key.getKeyId() + " belongs to " + u.getName() + ".");
                 return u;
             }
         }
+        logger.fine("No user found");
         return null;
     }
 
     private boolean userHasActiveHire(User u) {
+        logger.fine("Checking whether user " + u.getName() + "has active hires or not!");
         for (TripRecord t : tripRecordsList) {
             if (t.getUser().equals(u) && t.isActive()) {
+                logger.fine("User has active hires!");
                 return true;
             }
         }
+        logger.fine("User does not have active hires!");
         return false;
     }
 
