@@ -4,28 +4,37 @@ public class User {
 
     static int userNum = 1;
 
-    private int userId;
+    private String userId;
     private String name;
-    private String keyId;
+    private Key key;
     private String authCode;
 
-    public User(String name, String keyId, String authCode) {
+    public User(String name, Key key, String authCode) {
         this.name = name;
-        this.keyId = keyId;
+        this.key = key;
         this.authCode = authCode;
-        this.userId = userNum;
+        this.userId = Integer.toString(userNum);
         userNum++;
     }
 
-    public int getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public String getKeyId() {
-        return keyId;
+    public Key getKey() {
+        return key;
     }
 
     public String getAuthCode() {
         return authCode;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof User) {
+            User b = (User) obj;
+            return this.userId.equals(b.getUserId());
+        }
+        return false;
     }
 }

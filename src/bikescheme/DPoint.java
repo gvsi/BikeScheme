@@ -20,7 +20,9 @@ public class DPoint implements KeyInsertionObserver, BikeDockingObserver {
     private String instanceName;
     private int index;
     private Bike currentBike;
+    private BikeLock bikeLock;
     private DStation dStation;
+    private boolean hasFaultyBike;
 
     /**
      * 
@@ -37,41 +39,55 @@ public class DPoint implements KeyInsertionObserver, BikeDockingObserver {
         
         keyReader = new KeyReader(instanceName + ".kr");
         keyReader.setObserver(this);
+        bikeLock = new BikeLock(instanceName + ".bl");
         okLight = new OKLight(instanceName + ".ok");
+
         this.instanceName = instanceName;
         this.index = index;
         this.dStation = dStation;
         this.currentBike = null;
+        this.hasFaultyBike = false;
     }
        
     public void setDistributor(EventDistributor d) {
-        keyReader.addDistributorLinks(d); 
+        keyReader.addDistributorLinks(d);
     }
     
     public void setCollector(EventCollector c) {
         okLight.setCollector(c);
+        bikeLock.setCollector(c);
     }
 
     public boolean isOccupied() {
-        return currentBike != null;
+        return this.currentBike != null;
     }
     
     public String getInstanceName() {
         return instanceName;
     }
+
     public int getIndex() {
         return index;
     }
-    
+
+
+    private void startHire(String keyId) {
+        if (dStation.startHire(currentBike, this.dStation, keyId)) {
+            logger.fine("Start of hire successful for bike " + currentBike.getBikeId() + " with key " + keyId + "at dStation " + dStation.getInstanceName());
+            bikeLock.unlock();
+            okLight.flash();
+        }
+    }
+
     /**
      * Dummy implementation of docking point functionality on key insertion.
      *
      * Here, just flash the OK light.
      */
     public void keyInserted(String keyId) {
-        logger.fine(getInstanceName());
-
-        okLight.flash();
+        if (isOccupied() && !hasFaultyBike) {
+            startHire(keyId);
+        }
     }
 
     /**

@@ -109,8 +109,10 @@ public class Hub implements AddDStationObserver {
     }
 
     public void registerUser(String name, String keyId, String authCode) {
-        userList.add(new User(name, keyId, authCode));
-        keyList.add(new Key(keyId));
+        Key key = new Key(keyId);
+        keyList.add(key);
+        userList.add(new User(name, key, authCode));
+
         logger.fine(""+userList.get(userList.size()-1).getUserId());
         logger.fine(""+keyList.get(keyList.size()-1).getKeyId());
         logger.fine("Added user " + name + " and key with id " + keyId + " to the system");
@@ -168,6 +170,34 @@ public class Hub implements AddDStationObserver {
     private void addBike() {
         Bike newBike = new Bike();
         bikeList.add(newBike);
+    }
+
+    public boolean startHire(Bike bike, DStation dStation, String keyId) {
+        Key key = new Key(keyId);
+        User user = getUser(key);
+        if (user != null && !userHasActiveHire(user)) {
+            TripRecord tr = new TripRecord(bike, user, dStation);
+            return true;
+        }
+        return false;
+    }
+
+    private User getUser(Key key) {
+        for (User u : userList) {
+            if (u.getKey().equals(key)) {
+                return u;
+            }
+        }
+        return null;
+    }
+
+    private boolean userHasActiveHire(User u) {
+        for (TripRecord t : tripRecordsList) {
+            if (t.getUser().equals(u) && t.isActive()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public DStation getDStation(String instanceName) {

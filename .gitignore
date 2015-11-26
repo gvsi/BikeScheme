@@ -12,3 +12,13 @@ hs_err_pid*
 
 .idea
 *.class
+Bike.class
+BikeSensor.class
+DPoint.class
+DStation.class
+Hub.class
+Hub$1.class
+SystemTest.class
+User.class
+Bike.java
+BikeLock.java
