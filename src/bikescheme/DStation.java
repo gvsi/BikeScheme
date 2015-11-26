@@ -85,7 +85,7 @@ public class DStation implements StartRegObserver {
     }
     
     /** 
-     * Dummy implementation of docking station functionality for 
+     * Implementation of docking station functionality for
      * "register user" use case.
      * 
      * Method called on docking station receiving a "start registration"
@@ -109,6 +109,9 @@ public class DStation implements StartRegObserver {
         return dockingPoints.size();
     }
 
+    /**
+     * Gets the number of occupied dockingPoints for viewOccupancy purposes
+     */
     public int getOccupied() {
         int i = 0;
         for (DPoint dp : dockingPoints) {
@@ -118,7 +121,7 @@ public class DStation implements StartRegObserver {
         return i;
     }
 
-    public Bike handleDockedBike(String bikeId) { return hub.handleDockedBike(bikeId); }
+    public Bike handleDockedBike(String bikeId) { return hub.handleDockedBike(bikeId, this); }
 
     public boolean startHire(Bike bike, DStation dStation, String keyId) {
         return hub.startHire(bike, dStation, keyId);

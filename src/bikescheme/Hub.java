@@ -37,7 +37,6 @@ public class Hub implements HubInterface, AddDStationObserver {
      * 
      */
     public Hub() {
-
         // Construct and make connections with interface devices
         terminal = new HubTerminal("ht");
         terminal.setObserver(this);
@@ -149,14 +148,14 @@ public class Hub implements HubInterface, AddDStationObserver {
     /**
      * Handles a docked bike trigger (either AddBike or HireBike).
      */
-    public Bike handleDockedBike(String bikeId) {
+    public Bike handleDockedBike(String bikeId, DStation dStation) {
         logger.fine("Checking if bike with id " + bikeId + " exists.");
 
         for (Bike bike : bikeList) {
             if(bike.getBikeId().equals((bikeId))){
                 // If the bike already exists end the trip (ReturnBike).
                 logger.fine("Bike with id " + bikeId + " exists.");
-                endTrip(bike);
+                endTrip(bike, dStation);
                 return bike;
             }
         }
@@ -166,9 +165,13 @@ public class Hub implements HubInterface, AddDStationObserver {
     }
 
 
-    private void endTrip(Bike bike) {
-        //TODO
-        // Return a bike code
+    private void endTrip(Bike bike, DStation endDStation) {
+        logger.fine("Ending trip of bike with id " + bike.getBikeId() + "...");
+
+        TripRecord tr = getActiveTripRecord(bike);
+        if (tr != null) {
+            tr.finaliseTripRecord(endDStation);
+        }
     }
 
     private Bike addBike(String bikeId) {
@@ -226,6 +229,17 @@ public class Hub implements HubInterface, AddDStationObserver {
         }
         logger.fine("User does not have active hires!");
         return false;
+    }
+
+    private TripRecord getActiveTripRecord(Bike b) {
+        logger.fine("Getting active TripRecord for Bike with id " + b.getBikeId() + "...");
+        for (TripRecord tr : tripRecordsList) {
+            if (tr.isActive() && tr.getBike().equals(b)) {
+                logger.fine("Found trip record started in " + tr.getStartDStation() + " on " + tr.getStartTime() + " by user " + tr.getUser());
+                return tr;
+            }
+        }
+        return null;
     }
 
     public DStation getDStation(String instanceName) {

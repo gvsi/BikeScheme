@@ -10,14 +10,13 @@ public class TripRecord {
     public static final Logger logger = Logger.getLogger("bikescheme");
 
     private Bike bike;              // The bike used in the trip
-
     private User user;              // The user who hire the bike
     private DStation startDStation; // The starting DStation
     private DStation endDStation;   // The DStation where the user returns the bike
     private Date startTime;         // The time of the start of the hire
+
     private Date endTime;           // The time of the end of the hire
     private float charges;          // The charges for the hire in £
-
     private boolean isActive;       // Flags whether the hire is still active or not
 
     public TripRecord(Bike bike, User user, DStation startDStation) {
@@ -47,6 +46,19 @@ public class TripRecord {
     public User getUser() {
         return user;
     }
+
+    public Bike getBike() {
+        return bike;
+    }
+
+    public DStation getStartDStation() {
+        return startDStation;
+    }
+
+    public Date getStartTime() {
+        return startTime;
+    }
+
 
     public boolean isActive() {
         return isActive;
