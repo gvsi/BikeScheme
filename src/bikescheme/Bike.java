@@ -16,4 +16,13 @@ public class Bike {
     public int getBikeId() {
         return bikeId;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Bike) {
+            Bike b = (Bike) obj;
+            return this.bikeId == b.getBikeId();
+        }
+        return false;
+    }
 }

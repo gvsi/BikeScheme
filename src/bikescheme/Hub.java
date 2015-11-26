@@ -22,6 +22,8 @@ public class Hub implements AddDStationObserver {
     private Map<String,DStation> dockingStationMap;
     private ArrayList<User> userList;
     private ArrayList<Key> keyList;
+    private ArrayList<TripRecord> tripRecordsList;
+    private ArrayList<Bike> bikeList;
     
     /**
      * 
@@ -41,6 +43,7 @@ public class Hub implements AddDStationObserver {
         dockingStationMap = new HashMap<String,DStation>();
         userList = new ArrayList<>();
         keyList = new ArrayList<>();
+        tripRecordsList = new ArrayList<>();
 
         // Schedule timed notification for generating updates of 
         // hub display. 

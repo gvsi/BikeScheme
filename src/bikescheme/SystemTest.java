@@ -119,8 +119,13 @@ public class SystemTest {
              + "DSName, East, North, Status, #Occupied, #DPoints,"
              + "     A,    0,    0,    LOW,        0,       20,"
              + "     B,  400,  300,    LOW,        0,       50");
+        input ("2 08:05, Clock, clk, tick");
+        expect("2 08:05, HubDisplay, hd, viewOccupancy, unordered-tuples, 6,"
+                + "DSName, East, North, Status, #Occupied, #DPoints,"
+                + "     A,    0,    0,    LOW,        0,       20,"
+                + "     B,  400,  300,    LOW,        0,       50");
     }
-    
+
     /**
      * Run a test to demonstrate basic docking point interface
      * functionality.
@@ -135,7 +140,37 @@ public class SystemTest {
         input ("2 09:30, KeyReader, B.2.kr, insertKey, key-2");
         expect("2 09:30, OKLight,   B.2.ok, flashed");
     }
-    
+
+    /**
+     *  Run the "Hire bike" use case.
+     *
+     */
+    @Test
+    public void startHire() {
+        logger.info("Starting test: startHire");
+
+        input ("2 09:30, KeyReader, B.2.kr, insertKey, key-2");
+
+        expect("2 09:30, OKLight,   B.2.ok, flashed");
+
+        setupDemoSystemConfig();
+
+        // Set up input and expected output.
+        // Interleave input and expected output events so that sequence
+        // matches that when describing the use case main success scenario.
+        logger.info("registerUser");
+
+        input ("2 08:00, DSTouchScreen, A.ts, startReg, Alice");
+        expect("2 08:00, CardReader, A.cr, enterCardAndPin");
+        input ("2 08:01, CardReader, A.cr, checkCard, Alice-card-auth");
+        expect("2 08:01, KeyIssuer, A.ki, keyIssued, A.ki-1");
+
+        input ("2 08:02, DSTouchScreen, A.ts, startReg, Bob");
+        expect("2 08:02, CardReader, A.cr, enterCardAndPin");
+        input ("2 08:03, CardReader, A.cr, checkCard, Bob-card-auth");
+        expect("2 08:03, KeyIssuer, A.ki, keyIssued, A.ki-2");
+
+    }
     
     /*
      * 
