@@ -15,7 +15,8 @@ import java.util.logging.Logger;
 public class DPoint implements KeyInsertionObserver, BikeDockingObserver {
     public static final Logger logger = Logger.getLogger("bikescheme");
 
-    private KeyReader keyReader; 
+    private KeyReader keyReader;
+    private BikeSensor bikeSensor;
     private OKLight okLight;
     private String instanceName;
     private int index;
@@ -34,9 +35,11 @@ public class DPoint implements KeyInsertionObserver, BikeDockingObserver {
     public DPoint(String instanceName, int index, DStation dStation) {
 
      // Construct and make connections with interface devices
-        
+
         keyReader = new KeyReader(instanceName + ".kr");
         keyReader.setObserver(this);
+        bikeSensor = new BikeSensor(instanceName + ".bs");
+        bikeSensor.setObserver(this);
         okLight = new OKLight(instanceName + ".ok");
         this.instanceName = instanceName;
         this.index = index;
@@ -45,7 +48,8 @@ public class DPoint implements KeyInsertionObserver, BikeDockingObserver {
     }
        
     public void setDistributor(EventDistributor d) {
-        keyReader.addDistributorLinks(d); 
+        keyReader.addDistributorLinks(d);
+        bikeSensor.addDistributorLinks(d);
     }
     
     public void setCollector(EventCollector c) {
@@ -82,6 +86,7 @@ public class DPoint implements KeyInsertionObserver, BikeDockingObserver {
 
     @Override
     public void bikeDocked(String bikeId) {
-        dStation.handleDockedBike(bikeId);
+        this.currentBike = dStation.handleDockedBike(bikeId);
+
     }
 }

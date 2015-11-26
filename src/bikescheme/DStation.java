@@ -118,7 +118,7 @@ public class DStation implements StartRegObserver {
         return i;
     }
 
-    public boolean handleDockedBike(String bikeId) { return hub.handleDockedBike(bikeId); }
+    public Bike handleDockedBike(String bikeId) { return hub.handleDockedBike(bikeId); }
 
     public String getInstanceName() {
         return instanceName;

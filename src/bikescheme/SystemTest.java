@@ -70,6 +70,8 @@ public class SystemTest {
     public void setupDemoSystemConfig() {
         input("1 07:00, HubTerminal, ht, addDStation, A,   0,   0, 20");
         input("1 07:00, HubTerminal, ht, addDStation, B, 400, 300, 50");
+        input ("2 09:30, BikeSensor, B.2.bs, dockBike, bike-1");
+        //input ("2 09:30, KeyReader, B.2.kr, insertKey, key-2");
     }
 
     /**
@@ -137,17 +139,6 @@ public class SystemTest {
     }
 
 
-    /**
-     * Run a test to demonstrate adding a bike functionality.
-     */
-    @Test
-    public void addBike() {
-        logger.info("Starting test: addBike");
-
-        setupDemoSystemConfig();
-
-        input ("2 09:30, DPoint, B.2, addBike");
-    }
 
     /**
      *  Run the "Hire bike" use case.

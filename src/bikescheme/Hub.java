@@ -46,6 +46,7 @@ public class Hub implements AddDStationObserver {
         userList = new ArrayList<>();
         keyList = new ArrayList<>();
         tripRecordsList = new ArrayList<>();
+        bikeList = new ArrayList<>();
 
         // Schedule timed notification for generating updates of 
         // hub display. 
@@ -140,34 +141,30 @@ public class Hub implements AddDStationObserver {
         newDStation.setCollector(c);
     }
 
-    public boolean handleDockedBike(String bikeId) {
-        boolean bikeExists = false;
-
+    public Bike handleDockedBike(String bikeId) {
         for (Bike bike : bikeList) {
             if(bike.getBikeId().equals((bikeId))){
-                bikeExists = true;
-                break;
+                // If the bike already exists end the trip
+                endTrip(bike);
+                return bike;
             }
         }
 
-        // If a bike exist end a trip record else add a new bike to the system
-        if(bikeExists){
-            returnBike();
-        }else{
-            addBike();
-        }
-
-        return bikeExists;
+        // If a bike does not exist create a new one
+        return addBike(bikeId);
     }
 
-    private void returnBike() {
+    private void endTrip(Bike bike) {
         //TODO
-        // Return a bike code 
+        // Return a bike code
     }
 
-    private void addBike() {
-        Bike newBike = new Bike();
+    private Bike addBike(String bikeId) {
+        Bike newBike = new Bike(bikeId);
         bikeList.add(newBike);
+
+        logger.fine("New bike with id " + newBike.getBikeId() + " created.");
+        return newBike;
     }
 
     public DStation getDStation(String instanceName) {
