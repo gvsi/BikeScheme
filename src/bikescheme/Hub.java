@@ -58,14 +58,17 @@ public class Hub implements AddDStationObserver {
                 new TimedNotificationObserver() {
 
                     /** 
-                     * Generate dummy display of station occupancy data.
+                     * Generate a display of station occupancy data.
                      */
                     @Override
                     public void processTimedNotification() {
-                        logger.fine("");
 
                         ArrayList<String> occupancyArray = new ArrayList<>();
 
+                        /**
+                         * Check DStations for more than 85% or less than 15%
+                         * and displays them accordingly.
+                         */
                         for (String key : dockingStationMap.keySet()) {
 
                             String status = "";
@@ -114,8 +117,6 @@ public class Hub implements AddDStationObserver {
         keyList.add(key);
         userList.add(new User(name, key, authCode));
 
-        logger.fine(""+userList.get(userList.size()-1).getUserId());
-        logger.fine(""+keyList.get(keyList.size()-1).getKeyId());
         logger.fine("Added user " + name + " and key with id " + keyId + " to the system");
     }
 
@@ -128,7 +129,6 @@ public class Hub implements AddDStationObserver {
             int eastPos, 
             int northPos,
             int numPoints) {
-        logger.fine("");
         
         DStation newDStation = 
                 new DStation(instanceName, eastPos, northPos, numPoints, this);
@@ -144,15 +144,18 @@ public class Hub implements AddDStationObserver {
     }
 
     public Bike handleDockedBike(String bikeId) {
+        logger.fine("Checking if bike with id " + bikeId + " exists.");
+
         for (Bike bike : bikeList) {
             if(bike.getBikeId().equals((bikeId))){
-                // If the bike already exists end the trip
+                // If the bike already exists end the trip (ReturnBike).
+                logger.fine("Bike with id " + bikeId + " exists.");
                 endTrip(bike);
                 return bike;
             }
         }
 
-        // If a bike does not exist create a new one
+        // If a bike does not exist create a new one (AddBike).
         return addBike(bikeId);
     }
 
@@ -162,6 +165,8 @@ public class Hub implements AddDStationObserver {
     }
 
     private Bike addBike(String bikeId) {
+        logger.fine("Bike with id " + bikeId + " does not exist.");
+
         Bike newBike = new Bike(bikeId);
         bikeList.add(newBike);
 

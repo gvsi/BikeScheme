@@ -58,7 +58,7 @@ public class HubTerminal extends AbstractIODevice {
             int eastPos, 
             int northPos,
             int numPoints) {
-        logger.fine(getInstanceName());
+        logger.fine("DStation " + instanceName + " created.");
         
         
         observer.addDStation(instanceName, eastPos, northPos, numPoints);

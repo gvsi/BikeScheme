@@ -19,8 +19,7 @@ public class OKLight extends AbstractOutputDevice {
     }
     
     public void flash() {
-        logger.fine(getInstanceName());
-        
+
         String deviceClass = "OKLight";
         String deviceInstance = getInstanceName();
         String messageName = "flashed";

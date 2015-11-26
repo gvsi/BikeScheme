@@ -60,8 +60,6 @@ public class BikeSensor extends AbstractInputDevice {
      * @param keyId
      */
     public void dockBike(String keyId) {
-        logger.fine("Bike docked on " + getInstanceName());
-        
         observer.bikeDocked(keyId);
     }
 

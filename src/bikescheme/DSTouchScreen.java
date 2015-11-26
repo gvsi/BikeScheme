@@ -68,8 +68,6 @@ public class DSTouchScreen extends AbstractIODevice {
      * @param keyId
      */
     public void startReg(String personalDetails) {
-        logger.fine(getInstanceName());
-        
         startRegObserver.startRegReceived(personalDetails);    
     }
     

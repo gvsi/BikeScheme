@@ -102,7 +102,11 @@ public class DPoint implements KeyInsertionObserver, BikeDockingObserver {
 
     @Override
     public void bikeDocked(String bikeId) {
+        logger.fine("Start docking " + bikeId + " on " + getInstanceName());
+
         this.currentBike = dStation.handleDockedBike(bikeId);
         bikeLock.lock();
+
+        logger.fine("Bike with id " + bikeId + " locked on " + getInstanceName());
     }
 }

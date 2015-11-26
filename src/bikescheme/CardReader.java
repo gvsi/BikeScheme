@@ -39,9 +39,7 @@ public class CardReader extends AbstractIODevice {
         String deviceInstance = getInstanceName();
         String messageName = "enterCardAndPin";
         List<String> valueList = new ArrayList<String>();
-        
-        logger.fine(deviceInstance);
-        
+
         super.sendEvent(
             new Event(
                 Clock.getInstance().getDateAndTime(), 
@@ -63,8 +61,6 @@ public class CardReader extends AbstractIODevice {
         String deviceClass = "CardReader";
         String deviceInstance = getInstanceName();
         String messageName = "checkCard";
-        
-        logger.fine(deviceInstance);
         
         List<String> messageArgs = 
                 getDistributor().fetchMatchingEvent(

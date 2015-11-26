@@ -22,8 +22,6 @@ public class KeyIssuer extends AbstractOutputDevice {
     }
     
     public String issueKey() {
-        logger.fine(getInstanceName());
-        
         String deviceClass = "KeyIssuer";
         String deviceInstance = getInstanceName();
         String messageName = "keyIssued";

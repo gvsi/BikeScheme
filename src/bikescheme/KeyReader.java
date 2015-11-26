@@ -62,7 +62,7 @@ public class KeyReader extends AbstractInputDevice {
      * @param keyId
      */
     public void insertKey(String keyId) {
-        logger.fine(getInstanceName());
+        logger.fine("Key with id " + keyId + " inserted on KeyReader " + getInstanceName());
         
         observer.keyInserted(keyId);
     }

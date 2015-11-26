@@ -19,7 +19,6 @@ public class BikeLock extends AbstractOutputDevice {
     }
     
     public void lock() {
-        logger.fine(getInstanceName());
         
         String deviceClass = "BikeLock";
         String deviceInstance = getInstanceName();
@@ -36,7 +35,6 @@ public class BikeLock extends AbstractOutputDevice {
     }
     
     public void unlock() {
-        logger.fine(getInstanceName());
         
         String deviceClass = "BikeLock";
         String deviceInstance = getInstanceName();
