@@ -195,6 +195,7 @@ public class Hub implements HubInterface, AddDStationObserver {
         if (user != null && !userHasActiveHire(user)) {
             logger.fine("Creating new trip record.");
             TripRecord tr = new TripRecord(bike, user, dStation);
+            tripRecordsList.add(tr);
             return true;
         }
         return false;
@@ -208,7 +209,7 @@ public class Hub implements HubInterface, AddDStationObserver {
 
         for (User u : userList) {
             if (u.getKey().equals(key)) {
-                logger.fine("Found! Key with id " + key.getKeyId() + " belongs to " + u.getName() + ".");
+                logger.fine("Found! Key with id " + key.getKeyId() + " belongs to " + u + ".");
                 return u;
             }
         }
@@ -220,7 +221,7 @@ public class Hub implements HubInterface, AddDStationObserver {
      * Checks whether a User has active hires.
      */
     private boolean userHasActiveHire(User u) {
-        logger.fine("Checking whether user " + u.getName() + "has active hires or not!");
+        logger.fine("Checking whether user " + u + " has active hires or not...");
         for (TripRecord t : tripRecordsList) {
             if (t.getUser().equals(u) && t.isActive()) {
                 logger.fine("User has active hires!");
@@ -235,8 +236,10 @@ public class Hub implements HubInterface, AddDStationObserver {
         logger.fine("Getting active TripRecord for Bike with id " + b.getBikeId() + "...");
         for (TripRecord tr : tripRecordsList) {
             if (tr.isActive() && tr.getBike().equals(b)) {
-                logger.fine("Found trip record started in " + tr.getStartDStation() + " on " + tr.getStartTime() + " by user " + tr.getUser());
+                logger.fine("Found trip record started in " + tr.getStartDStation().getInstanceName() + " on " + tr.getStartTime() + " by user " + tr.getUser());
                 return tr;
+            } else {
+                logger.warning("Error in trip record search! No active TripRecord with " + b.getBikeId() + " found!");
             }
         }
         return null;

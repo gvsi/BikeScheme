@@ -81,7 +81,7 @@ public class DPoint implements KeyInsertionObserver, BikeDockingObserver {
      */
     private void startHire(String keyId) {
         if (dStation.startHire(currentBike, this.dStation, keyId)) {
-            logger.fine("Start of hire successful for bike " + currentBike.getBikeId() + " with key " + keyId + "at dStation " + dStation.getInstanceName());
+            logger.fine("Start of hire successful for bike " + currentBike.getBikeId() + " with key " + keyId + " at dStation " + dStation.getInstanceName());
             bikeLock.unlock();
             okLight.flash();
         }

@@ -30,7 +30,7 @@ public class TripRecord {
         this.isActive = true;
         this.charges = 0;
 
-        logger.fine("Initialised a new trip at" + this.startTime + " record for user " + user.getUserId() + " using bike " + bike.getBikeId() + ".");
+        logger.fine("Initialised a new trip record on " + this.startTime + " for " + user + " using bike with id " + bike.getBikeId() + ".");
     }
 
     // Updates and finalises the TripRecord
