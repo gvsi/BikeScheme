@@ -3,6 +3,8 @@
  */
 package bikescheme;
 
+import com.sun.xml.internal.bind.v2.TODO;
+
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -137,7 +139,37 @@ public class Hub implements AddDStationObserver {
         newDStation.setDistributor(d);
         newDStation.setCollector(c);
     }
-    
+
+    public boolean handleDockedBike(String bikeId) {
+        boolean bikeExists = false;
+
+        for (Bike bike : bikeList) {
+            if(bike.getBikeId().equals((bikeId))){
+                bikeExists = true;
+                break;
+            }
+        }
+
+        // If a bike exist end a trip record else add a new bike to the system
+        if(bikeExists){
+            returnBike();
+        }else{
+            addBike();
+        }
+
+        return bikeExists;
+    }
+
+    private void returnBike() {
+        //TODO
+        // Return a bike code 
+    }
+
+    private void addBike() {
+        Bike newBike = new Bike();
+        bikeList.add(newBike);
+    }
+
     public DStation getDStation(String instanceName) {
         return dockingStationMap.get(instanceName);
     }

@@ -6,14 +6,14 @@ package bikescheme;
 public class Bike {
     static int bikeNum = 1;
 
-    private int bikeId;
+    private String bikeId;
 
     public Bike() {
-        this.bikeId = bikeNum;
+        this.bikeId = Integer.toString(bikeNum);
         bikeNum++;
     }
 
-    public int getBikeId() {
+    public String getBikeId() {
         return bikeId;
     }
 

@@ -49,7 +49,7 @@ public class BikeSensor extends AbstractInputDevice {
             String bikeId = e.getMessageArg(0);
             dockBike(bikeId);
             
-        } else {
+        }else{
             super.receiveEvent(e);
         }
     }
@@ -60,10 +60,11 @@ public class BikeSensor extends AbstractInputDevice {
      * @param keyId
      */
     public void dockBike(String keyId) {
-        logger.fine(getInstanceName());
+        logger.fine("Bike docked on " + getInstanceName());
         
         observer.bikeDocked(keyId);
     }
+
 
     /*
      * 

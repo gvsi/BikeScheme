@@ -119,13 +119,8 @@ public class SystemTest {
              + "DSName, East, North, Status, #Occupied, #DPoints,"
              + "     A,    0,    0,    LOW,        0,       20,"
              + "     B,  400,  300,    LOW,        0,       50");
-        input ("2 08:05, Clock, clk, tick");
-        expect("2 08:05, HubDisplay, hd, viewOccupancy, unordered-tuples, 6,"
-                + "DSName, East, North, Status, #Occupied, #DPoints,"
-                + "     A,    0,    0,    LOW,        0,       20,"
-                + "     B,  400,  300,    LOW,        0,       50");
     }
-
+    
     /**
      * Run a test to demonstrate basic docking point interface
      * functionality.
@@ -139,6 +134,19 @@ public class SystemTest {
         
         input ("2 09:30, KeyReader, B.2.kr, insertKey, key-2");
         expect("2 09:30, OKLight,   B.2.ok, flashed");
+    }
+
+
+    /**
+     * Run a test to demonstrate adding a bike functionality.
+     */
+    @Test
+    public void addBike() {
+        logger.info("Starting test: addBike");
+
+        setupDemoSystemConfig();
+
+        input ("2 09:30, DPoint, B.2, addBike");
     }
 
     /**
@@ -171,7 +179,7 @@ public class SystemTest {
         expect("2 08:03, KeyIssuer, A.ki, keyIssued, A.ki-2");
 
     }
-    
+
     /*
      * 
      * SUPPORT CODE FOR RUNNING TESTS

@@ -62,7 +62,7 @@ public class DStation implements StartRegObserver {
         dockingPoints = new ArrayList<DPoint>();
         
         for (int i = 1; i <= numPoints; i++) {
-            DPoint dp = new DPoint(instanceName + "." + i, i - 1);
+            DPoint dp = new DPoint(instanceName + "." + i, i - 1, this);
             dockingPoints.add(dp);
         }
     }
@@ -118,6 +118,8 @@ public class DStation implements StartRegObserver {
         return i;
     }
 
+    public boolean handleDockedBike(String bikeId) { return hub.handleDockedBike(bikeId); }
+
     public String getInstanceName() {
         return instanceName;
     }
@@ -129,6 +131,5 @@ public class DStation implements StartRegObserver {
     public int getNorthPos() {
         return northPos;
     }
- 
 
 }

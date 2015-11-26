@@ -12,7 +12,7 @@ import java.util.logging.Logger;
  * @author pbj
  *
  */
-public class DPoint implements KeyInsertionObserver {
+public class DPoint implements KeyInsertionObserver, BikeDockingObserver {
     public static final Logger logger = Logger.getLogger("bikescheme");
 
     private KeyReader keyReader; 
@@ -20,6 +20,7 @@ public class DPoint implements KeyInsertionObserver {
     private String instanceName;
     private int index;
     private Bike currentBike;
+    private DStation dStation;
 
     /**
      * 
@@ -30,7 +31,7 @@ public class DPoint implements KeyInsertionObserver {
      * @param index of reference to this docking point  in owning DStation's
      *  list of its docking points.
      */
-    public DPoint(String instanceName, int index) {
+    public DPoint(String instanceName, int index, DStation dStation) {
 
      // Construct and make connections with interface devices
         
@@ -39,6 +40,7 @@ public class DPoint implements KeyInsertionObserver {
         okLight = new OKLight(instanceName + ".ok");
         this.instanceName = instanceName;
         this.index = index;
+        this.dStation = dStation;
         this.currentBike = null;
     }
        
@@ -61,17 +63,25 @@ public class DPoint implements KeyInsertionObserver {
         return index;
     }
     
-    /** 
+    /**
      * Dummy implementation of docking point functionality on key insertion.
-     * 
+     *
      * Here, just flash the OK light.
      */
     public void keyInserted(String keyId) {
         logger.fine(getInstanceName());
-        
-        okLight.flash();       
-    }
-    
- 
 
+        okLight.flash();
+    }
+
+    /**
+     * Whenever a bike is docked:
+     *  1: If it already exists it is a ReturnBike scenario
+     *  2: If it does not exist it is a AddBike scenario
+     */
+
+    @Override
+    public void bikeDocked(String bikeId) {
+        dStation.handleDockedBike(bikeId);
+    }
 }
