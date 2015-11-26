@@ -26,7 +26,7 @@ public class DStation implements StartRegObserver {
     private KeyIssuer keyIssuer;
     private List<DPoint> dockingPoints;
 
-    private Hub hub;
+    private HubInterface hub;
     /**
      * 
      * Construct a Docking Station object with touch screen, card reader

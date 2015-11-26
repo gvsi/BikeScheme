@@ -16,7 +16,7 @@ import java.util.logging.Logger;
  * @author pbj
  *
  */
-public class Hub implements AddDStationObserver {
+public class Hub implements HubInterface, AddDStationObserver {
     public static final Logger logger = Logger.getLogger("bikescheme");
 
     private HubTerminal terminal;
@@ -109,6 +109,9 @@ public class Hub implements AddDStationObserver {
         terminal.setCollector(c);
     }
 
+    /**
+     * Registers a new user into the scheme
+     */
     public void registerUser(String name, String keyId, String authCode) {
         Key key = new Key(keyId);
         keyList.add(key);
@@ -120,7 +123,7 @@ public class Hub implements AddDStationObserver {
     }
 
     /**
-     * 
+     * Add a DStation to the system
      */
     @Override
     public void addDStation(
@@ -143,6 +146,9 @@ public class Hub implements AddDStationObserver {
         newDStation.setCollector(c);
     }
 
+    /**
+     * Handles a docked bike trigger (either AddBike or HireBike).
+     */
     public Bike handleDockedBike(String bikeId) {
         for (Bike bike : bikeList) {
             if(bike.getBikeId().equals((bikeId))){
@@ -155,6 +161,7 @@ public class Hub implements AddDStationObserver {
         // If a bike does not exist create a new one
         return addBike(bikeId);
     }
+
 
     private void endTrip(Bike bike) {
         //TODO
@@ -169,10 +176,13 @@ public class Hub implements AddDStationObserver {
         return newBike;
     }
 
+    /**
+     * Creates a new TripRecord.
+     */
     public boolean startHire(Bike bike, DStation dStation, String keyId) {
 
         Key key = new Key(keyId);
-        User user = getUser(key);
+        User user = getUser (key);
 
         if (user != null && !userHasActiveHire(user)) {
             logger.fine("Creating new trip record.");
@@ -182,6 +192,9 @@ public class Hub implements AddDStationObserver {
         return false;
     }
 
+    /**
+     * Gets the owner User of a key.
+     */
     private User getUser(Key key) {
         logger.fine("Finding user with key with keyId " + key.getKeyId() + "...");
 
@@ -195,6 +208,9 @@ public class Hub implements AddDStationObserver {
         return null;
     }
 
+    /**
+     * Checks whether a User has active hires.
+     */
     private boolean userHasActiveHire(User u) {
         logger.fine("Checking whether user " + u.getName() + "has active hires or not!");
         for (TripRecord t : tripRecordsList) {
