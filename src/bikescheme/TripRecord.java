@@ -12,6 +12,7 @@ public class TripRecord {
     private Bike bike;              // The bike used in the trip
     private User user;              // The user who hire the bike
     private DStation startDStation; // The starting DStation
+
     private DStation endDStation;   // The DStation where the user returns the bike
     private Date startTime;         // The time of the start of the hire
 
@@ -38,7 +39,8 @@ public class TripRecord {
         this.endDStation = endDStation;
         this.isActive = false;
         this.endTime = Clock.getInstance().getDateAndTime();
-        
+
+        // Calculates the charges for the trip
         if (this.endTime.after(this.startTime)) {
             long diff = this.endTime.getTime() - this.startTime.getTime();
             int diffMin = (int) (diff / 1000 / 60);
@@ -62,10 +64,17 @@ public class TripRecord {
         return startDStation;
     }
 
+    public DStation getEndDStation() {
+        return endDStation;
+    }
+
     public Date getStartTime() {
         return startTime;
     }
 
+    public Date getEndTime() {
+        return endTime;
+    }
 
     public boolean isActive() {
         return isActive;

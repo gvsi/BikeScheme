@@ -284,4 +284,37 @@ public class Hub implements HubInterface, AddDStationObserver, IssueMasterKeyObs
 
         logger.fine("Master key with id " + keyId + " issued.");
     }
+
+    @Override
+    public ArrayList<String> generateUserActivity(String keyId) {
+        logger.fine("Generating user activity summary for user with key id " + keyId);
+        Key key = getKey(keyId);
+        if (key != null) {
+            ArrayList<String> userActivity = new ArrayList<>();
+
+            // Calculate midnight of today
+            Calendar date = Clock.getInstance().getDateAndTimeAsCalendar();
+            date.set(Calendar.HOUR_OF_DAY, 0);
+            date.set(Calendar.MINUTE, 0);
+            date.set(Calendar.SECOND, 0);
+            date.set(Calendar.MILLISECOND, 0);
+
+            User user = getUser(key);
+
+            // Add details of all the trips completed since prior midnight
+            for (TripRecord tr : tripRecordsList) {
+                if (tr.getEndTime().after(date.getTime()) && !tr.isActive() && tr.getUser().equals(user)) {
+                    userActivity.add(Clock.format(tr.getStartTime())); // HireTime
+                    userActivity.add(tr.getStartDStation().getInstanceName()); // HireDS
+                    userActivity.add(tr.getEndDStation().getInstanceName()); // ReturnDS
+                    userActivity.add(Integer.toString(Clock.minutesBetween(tr.getStartTime(), tr.getEndTime()))); // Duration (min)
+                }
+            }
+            return userActivity;
+        } else {
+            logger.severe("Could not find key with id " + keyId);
+        }
+        return null;
+    }
+
 }

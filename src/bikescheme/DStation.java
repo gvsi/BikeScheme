@@ -14,7 +14,7 @@ import java.util.logging.Logger;
  * @author pbj
  *
  */
-public class DStation implements StartRegObserver {
+public class DStation implements StartRegObserver, ViewActivityObserver {
     public static final Logger logger = Logger.getLogger("bikescheme");
 
     private String instanceName;
@@ -24,6 +24,7 @@ public class DStation implements StartRegObserver {
     private DSTouchScreen touchScreen;
     private CardReader cardReader; 
     private KeyIssuer keyIssuer;
+    private KeyReader keyReader;
     private List<DPoint> dockingPoints;
 
     private HubInterface hub;
@@ -58,7 +59,8 @@ public class DStation implements StartRegObserver {
         cardReader = new CardReader(instanceName + ".cr");
         
         keyIssuer = new KeyIssuer(instanceName + ".ki");
-        
+        keyReader = new KeyReader(instanceName + ".kr");
+
         dockingPoints = new ArrayList<DPoint>();
         
         for (int i = 1; i <= numPoints; i++) {
@@ -125,6 +127,14 @@ public class DStation implements StartRegObserver {
 
     public boolean handleKeyInserted(Bike bike, DStation dStation, String keyId) {
         return hub.handleKeyInserted(bike, dStation, keyId);
+    }
+
+    public void viewActivityReceived() {
+        // Prompt user to insert key
+        touchScreen.showPrompt("Please insert key into Terminal");
+
+        String keyId = keyReader.waitForKeyInsertion();
+        hub.generateUserActivity(keyId);
     }
 
     public String getInstanceName() {
