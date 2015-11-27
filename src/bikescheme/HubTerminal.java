@@ -22,10 +22,15 @@ public class HubTerminal extends AbstractIODevice {
     
     // Fields and methods for device input function
     
-    private AddDStationObserver observer;
+    private AddDStationObserver addStationObserver;
+    private IssueMasterKeyObserver issueMasterKeyOserver;
     
-    public void setObserver(AddDStationObserver o) {
-        observer = o;
+    public void setAddStationObserver(AddDStationObserver o) {
+        addStationObserver = o;
+    }
+
+    public void setIssueMasterKeyObserver(IssueMasterKeyObserver o) {
+        issueMasterKeyOserver = o;
     }
     
     /** 
@@ -46,10 +51,25 @@ public class HubTerminal extends AbstractIODevice {
             
             addDStation(instanceName, eastPos, northPos, numPoints);
             
+        } else if (e.getMessageName().equals("issueMasterKey")
+                && e.getMessageArgs().size() == 0){
+
+            issueMasterKey();
+
         } else {
             super.receiveEvent(e);
-        } 
+        }
     }
+
+    /**
+     * Handle request to create a new master key
+     */
+    private void issueMasterKey() {
+        logger.fine("Initiating master key dispense procedure.");
+
+        issueMasterKeyOserver.issueMasterKey();
+    }
+
     /**
      * Handle request to add a new docking station
      */
@@ -59,9 +79,9 @@ public class HubTerminal extends AbstractIODevice {
             int northPos,
             int numPoints) {
         logger.fine("DStation " + instanceName + " created.");
-        
-        
-        observer.addDStation(instanceName, eastPos, northPos, numPoints);
+
+
+        addStationObserver.addDStation(instanceName, eastPos, northPos, numPoints);
     }
     
     

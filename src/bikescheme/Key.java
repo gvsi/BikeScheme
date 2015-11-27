@@ -5,17 +5,19 @@ package bikescheme;
  */
 public class Key {
     private String keyId;
+    private boolean isMasterKey;
 
-    // TODO
-    // private boolean isMasterKey;
-
-
-    public Key(String keyId) {
+    public Key(String keyId, boolean isMasterKey) {
         this.keyId = keyId;
+        this.isMasterKey = isMasterKey;
     }
 
     public String getKeyId() {
         return keyId;
+    }
+
+    public boolean isMasterKey() {
+        return isMasterKey;
     }
 
     @Override

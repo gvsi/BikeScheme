@@ -21,16 +21,17 @@ public class KeyIssuer extends AbstractOutputDevice {
         keyNum = 1;
     }
     
-    public String issueKey() {
+    public String issueKey(boolean isMasterKey) {
         String deviceClass = "KeyIssuer";
         String deviceInstance = getInstanceName();
         String messageName = "keyIssued";
         String newKeyId = getInstanceName() + "-" + keyNum;
+        String master = isMasterKey ? "master-key" : "normal-key";
         keyNum++;
-        
+
         List<String> valueList = new ArrayList<String>();
         valueList.add(newKeyId); 
-        
+        valueList.add(master);
         
         super.sendEvent(
             new Event(

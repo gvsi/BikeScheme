@@ -16,7 +16,7 @@ import java.util.logging.Logger;
  * @author pbj
  *
  */
-public class Hub implements HubInterface, AddDStationObserver {
+public class Hub implements HubInterface, AddDStationObserver, IssueMasterKeyObserver {
     public static final Logger logger = Logger.getLogger("bikescheme");
 
     private HubTerminal terminal;
@@ -26,6 +26,7 @@ public class Hub implements HubInterface, AddDStationObserver {
     private ArrayList<Key> keyList;
     private ArrayList<TripRecord> tripRecordsList;
     private ArrayList<Bike> bikeList;
+    private KeyIssuer masterKeyIssuer;
     
     /**
      * 
@@ -40,7 +41,8 @@ public class Hub implements HubInterface, AddDStationObserver {
 
         // Construct and make connections with interface devices
         terminal = new HubTerminal("ht");
-        terminal.setObserver(this);
+        terminal.setAddStationObserver(this);
+        terminal.setIssueMasterKeyObserver(this);
         display = new HubDisplay("hd");
         dockingStationMap = new HashMap<String,DStation>();
         userList = new ArrayList<>();
@@ -116,7 +118,7 @@ public class Hub implements HubInterface, AddDStationObserver {
      * Registers a new user into the scheme
      */
     public void registerUser(String name, String keyId, String authCode) {
-        Key key = new Key(keyId);
+        Key key = new Key(keyId, false);
         keyList.add(key);
         userList.add(new User(name, key, authCode));
 
@@ -182,19 +184,39 @@ public class Hub implements HubInterface, AddDStationObserver {
     }
 
     /**
-     * Creates a new TripRecord.
+     * Handle the docking point key insertion:
+     * If the key is a master key remove the bike and do not create a new record
+     * else create a new record and start hire.
      */
-    public boolean startHire(Bike bike, DStation dStation, String keyId) {
+    public boolean handleKeyInserted(Bike bike, DStation dStation, String keyId) {
 
-        Key key = new Key(keyId);
+        Key key = getKey(keyId);
         User user = getUser (key);
 
-        if (user != null && !userHasActiveHire(user)) {
+        if(key.isMasterKey()) {
+            bikeList.remove(bike);
+            return false;
+        }else if (user != null && !userHasActiveHire(user)) {
             logger.fine("Creating new trip record.");
             TripRecord tr = new TripRecord(bike, user, dStation);
             return true;
         }
+
         return false;
+    }
+
+    /**
+     * Gets the Key associated with a keyId.
+     */
+    private Key getKey(String keyId) {
+
+        for (Key k : keyList) {
+            if (k.getKeyId().equals(keyId)) {
+                return k;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -230,5 +252,19 @@ public class Hub implements HubInterface, AddDStationObserver {
 
     public DStation getDStation(String instanceName) {
         return dockingStationMap.get(instanceName);
+    }
+
+    @Override
+    public void issueMasterKey() {
+        masterKeyIssuer = new KeyIssuer("mki");
+        EventCollector c = terminal.getCollector();
+        masterKeyIssuer.setCollector(c);
+
+        String keyId = masterKeyIssuer.issueKey(true);
+
+        Key key = new Key(keyId, true);
+        keyList.add(key);
+
+        logger.fine("Master key with id " + keyId + " issued.");
     }
 }

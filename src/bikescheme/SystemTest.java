@@ -76,12 +76,12 @@ public class SystemTest {
         input ("2 08:00, DSTouchScreen, A.ts, startReg, Alice");
         expect("2 08:00, CardReader, A.cr, enterCardAndPin");
         input ("2 08:01, CardReader, A.cr, checkCard, Alice-card-auth");
-        expect("2 08:01, KeyIssuer, A.ki, keyIssued, A.ki-1");
+        expect("2 08:01, KeyIssuer, A.ki, keyIssued, A.ki-1, normal-key");
 
         input ("2 08:02, DSTouchScreen, A.ts, startReg, Bob");
         expect("2 08:02, CardReader, A.cr, enterCardAndPin");
         input ("2 08:03, CardReader, A.cr, checkCard, Bob-card-auth");
-        expect("2 08:03, KeyIssuer, A.ki, keyIssued, A.ki-2");
+        expect("2 08:03, KeyIssuer, A.ki, keyIssued, A.ki-2, normal-key");
     }
 
     public void setupBikes() {
@@ -110,12 +110,12 @@ public class SystemTest {
         input ("2 08:00, DSTouchScreen, A.ts, startReg, Alice");
         expect("2 08:00, CardReader, A.cr, enterCardAndPin");
         input ("2 08:01, CardReader, A.cr, checkCard, Alice-card-auth");
-        expect("2 08:01, KeyIssuer, A.ki, keyIssued, A.ki-1");
+        expect("2 08:01, KeyIssuer, A.ki, keyIssued, A.ki-1, normal-key");
 
         input ("2 08:02, DSTouchScreen, A.ts, startReg, Bob");
         expect("2 08:02, CardReader, A.cr, enterCardAndPin");
         input ("2 08:03, CardReader, A.cr, checkCard, Bob-card-auth");
-        expect("2 08:03, KeyIssuer, A.ki, keyIssued, A.ki-2");
+        expect("2 08:03, KeyIssuer, A.ki, keyIssued, A.ki-2, normal-key");
 
     }
 
@@ -134,6 +134,34 @@ public class SystemTest {
 
         input ("1 09:30, BikeSensor, B.1.bs, dockBike, bike-2");
         expect ("1 09:30, BikeLock, B.1.bl, locked");
+
+    }
+
+    /**
+     *  Run the "Remove Bike" use case.
+     *
+     */
+    @Test
+    public void removeBike() {
+        logger.info("Starting test: removeBike");
+
+        setupHubTerminals();
+
+
+
+    }
+
+    /**
+     *  Test dispensing a master key.
+     */
+    @Test
+    public void issueMasterKey() {
+        logger.info("Starting test: issueMasterKey");
+
+        setupHubTerminals();
+
+        input("1 07:00, HubTerminal, ht, issueMasterKey");
+        expect("1 07:00, KeyIssuer, mki, keyIssued, mki-1, master-key");
 
     }
 

@@ -99,7 +99,7 @@ public class DStation implements StartRegObserver {
         String authCode = cardReader.readCard();    // Pull in non-triggering input event
         logger.fine("Read card with authCode: " + authCode);
 
-        String keyId = keyIssuer.issueKey(); // Generate output event
+        String keyId = keyIssuer.issueKey(false); // Generate output event
         logger.fine("Issued key with id: " + keyId);
 
         hub.registerUser(personalInfo, keyId, authCode);
@@ -120,8 +120,8 @@ public class DStation implements StartRegObserver {
 
     public Bike handleDockedBike(String bikeId) { return hub.handleDockedBike(bikeId); }
 
-    public boolean startHire(Bike bike, DStation dStation, String keyId) {
-        return hub.startHire(bike, dStation, keyId);
+    public boolean handleKeyInserted(Bike bike, DStation dStation, String keyId) {
+        return hub.handleKeyInserted(bike, dStation, keyId);
     }
 
     public String getInstanceName() {

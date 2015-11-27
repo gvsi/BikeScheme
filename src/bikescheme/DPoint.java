@@ -79,8 +79,8 @@ public class DPoint implements KeyInsertionObserver, BikeDockingObserver {
      * Send a message to the dStation, which sends a message to the hub to start a hire.
      * If everything is successful, unlock the bike and flash the light.
      */
-    private void startHire(String keyId) {
-        if (dStation.startHire(currentBike, this.dStation, keyId)) {
+    private void handleKeyInserted(String keyId) {
+        if (dStation.handleKeyInserted(currentBike, this.dStation, keyId) && !hasFaultyBike) {
             logger.fine("Start of hire successful for bike " + currentBike.getBikeId() + " with key " + keyId + "at dStation " + dStation.getInstanceName());
             bikeLock.unlock();
             okLight.flash();
@@ -92,8 +92,10 @@ public class DPoint implements KeyInsertionObserver, BikeDockingObserver {
      *
      */
     public void keyInserted(String keyId) {
-        if (isOccupied() && !hasFaultyBike) {
-            startHire(keyId);
+        if (isOccupied()) {
+            handleKeyInserted(keyId);
+        }else{
+            logger.fine("Trying to hire unoccupied DPoint " + getInstanceName());
         }
     }
 
