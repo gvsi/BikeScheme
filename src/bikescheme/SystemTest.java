@@ -172,9 +172,7 @@ public class SystemTest {
     }
     
     /**
-     * Run a test to demonstrate basic docking point interface
-     * functionality.
-     * 
+     * Run the "Hire Bike" use case.
      */
     @Test
     public void startHire() {
@@ -190,7 +188,7 @@ public class SystemTest {
     }
 
     /**
-     * Simulate HireBike use case
+     * Run the "Return Bike" use case.
      */
     @Test
     public void returnBike() {
@@ -217,7 +215,6 @@ public class SystemTest {
         logger.info("Starting test: removeBike");
 
         setupDStations();
-
         setupBikes();
 
         input("1 07:00, HubTerminal, ht, issueMasterKey");
@@ -244,7 +241,7 @@ public class SystemTest {
     }
 
     /**
-     *  Test view user activity report.
+     *  Run the "View User Activity" use case.
      */
     @Test
     public void generateUserReport() {
@@ -271,6 +268,28 @@ public class SystemTest {
     }
 
     /**
+     *  Run the "Report Fault" use case.
+     */
+    @Test
+    public void reportFault() {
+        logger.info("Starting test: reportFault");
+
+        setupDStations();
+        setupUsers();
+        setupBikes();
+
+        input ("2 09:30, KeyReader, A.2.kr, insertKey, A.ki-1");
+        expect("2 09:30, BikeLock,  A.2.bl, unlocked");
+        expect("2 09:30, OKLight,   A.2.ok, flashed");
+
+        input ("2 10:31, BikeSensor, B.1.bs, dockBike, bike-2");
+        expect("2 10:31, BikeLock,  B.1.bl, locked");
+
+        input ("2 10:32, FaultButton, B.1.fb, reportFault");
+
+    }
+
+    /**
      *  Test FindFreePoints use case.
      */
     @Test
@@ -293,6 +312,7 @@ public class SystemTest {
                 + "DSName, East, North, #Occupied, #DPoints,"
                 + "     A,    0,     0,         1,       20");
     }
+
 
     /*
      * 

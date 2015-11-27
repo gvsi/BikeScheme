@@ -3,6 +3,8 @@
  */
 package bikescheme;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.logging.Logger;
 
 /**
@@ -12,7 +14,7 @@ import java.util.logging.Logger;
  * @author pbj
  *
  */
-public class DPoint implements KeyInsertionObserver, BikeDockingObserver {
+public class DPoint implements KeyInsertionObserver, BikeDockingObserver, FaultButtonObserver {
     public static final Logger logger = Logger.getLogger("bikescheme");
 
     private KeyReader keyReader;
@@ -23,6 +25,7 @@ public class DPoint implements KeyInsertionObserver, BikeDockingObserver {
     private Bike currentBike;
     private BikeLock bikeLock;
     private DStation dStation;
+    private FaultButton fButton;
     private boolean hasFaultyBike;
 
     /**
@@ -38,6 +41,8 @@ public class DPoint implements KeyInsertionObserver, BikeDockingObserver {
 
      // Construct and make connections with interface devices
 
+        fButton = new FaultButton(instanceName + ".fb");
+        fButton.setObserver(this);
         keyReader = new KeyReader(instanceName + ".kr");
         keyReader.setObserver(this);
         bikeLock = new BikeLock(instanceName + ".bl");
@@ -53,6 +58,7 @@ public class DPoint implements KeyInsertionObserver, BikeDockingObserver {
     }
        
     public void setDistributor(EventDistributor d) {
+        fButton.addDistributorLinks(d);
         keyReader.addDistributorLinks(d);
         bikeSensor.addDistributorLinks(d);
     }
@@ -90,6 +96,7 @@ public class DPoint implements KeyInsertionObserver, BikeDockingObserver {
             bikeLock.unlock();
             okLight.flash();
             currentBike = null;
+            hasFaultyBike = false;
         }
     }
 
@@ -105,6 +112,7 @@ public class DPoint implements KeyInsertionObserver, BikeDockingObserver {
         }
     }
 
+
     /**
      * Whenever a bike is docked:
      *  1: If it already exists it is a ReturnBike scenario
@@ -119,5 +127,24 @@ public class DPoint implements KeyInsertionObserver, BikeDockingObserver {
         bikeLock.lock();
 
         logger.fine("Bike with id " + bikeId + " locked on " + getInstanceName());
+    }
+
+    @Override
+    public void pressed(Date pressingTime) {
+        if(isOccupied()) {
+            Date dockingTime = dStation.getBikeDockingTime(currentBike.getBikeId());
+
+            long diff = pressingTime.getTime() - dockingTime.getTime();
+            int diffMin = (int) (diff / 1000 / 60);
+
+            if (diffMin < 2) {
+                hasFaultyBike = true;
+                logger.fine("Bike with id " + currentBike.getBikeId() + " reported as faulty on DPoint " + instanceName);
+            } else {
+                logger.fine("Button pressed 2 minutes or more after docking.");
+            }
+        }else{
+            logger.fine("DPoint " + instanceName + " is not occupied.");
+        }
     }
 }

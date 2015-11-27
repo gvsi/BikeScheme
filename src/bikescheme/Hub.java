@@ -288,6 +288,24 @@ public class Hub implements HubInterface, AddDStationObserver, IssueMasterKeyObs
         logger.fine("Master key with id " + keyId + " issued.");
     }
 
+    /**
+     * Returning the last time a particular bike
+     * was docked.
+     */
+    @Override
+    public Date getBikeDockingTime(String bikeId) {
+        ArrayList<TripRecord> reversedTripRecordList = tripRecordsList;
+        Collections.reverse(reversedTripRecordList);
+
+        for (TripRecord t : reversedTripRecordList) {
+            if (t.getBike().getBikeId().equals(bikeId) && !t.isActive()) {
+                return t.getEndTime();
+            }
+        }
+
+        return null;
+    }
+
 
     /**
      * Generate user activity to display at a DStation.
