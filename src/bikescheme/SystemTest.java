@@ -192,8 +192,8 @@ public class SystemTest {
         expect("2 09:30, BikeLock,  A.2.bl, unlocked");
         expect("2 09:30, OKLight,   A.2.ok, flashed");
 
-        input ("2 09:45, BikeSensor, B.1.bs, dockBike, bike-2");
-        expect("2 09:45, BikeLock,  B.1.bl, locked");
+        input ("2 10:31, BikeSensor, B.1.bs, dockBike, bike-2");
+        expect("2 10:31, BikeLock,  B.1.bl, locked");
     }
 
     /*
