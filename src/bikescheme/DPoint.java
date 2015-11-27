@@ -103,12 +103,10 @@ public class DPoint implements KeyInsertionObserver, BikeDockingObserver, FaultB
             logger.fine("Start of hire successful for bike " + currentBike.getBikeId() + " with key " + keyId + "at dStation " + dStation.getInstanceName());
             bikeLock.unlock();
             okLight.flash();
-            currentBike = null;
         }else{
             logger.fine("Bike " + currentBike.getBikeId() + " removed from the DPoint " + dStation.getInstanceName() + " using Master Key with id " + keyId);
             bikeLock.unlock();
             okLight.flash();
-            currentBike = null;
             hasFaultyBike = false;
         }
 
@@ -127,13 +125,15 @@ public class DPoint implements KeyInsertionObserver, BikeDockingObserver, FaultB
     public void bikeDocked(String bikeId) {
         logger.fine("Start docking " + bikeId + " on " + getInstanceName());
 
-        this.currentBike = dStation.handleDockedBike(bikeId);
-        bikeLock.lock();
 
-        // Updates the occupancy data in the hub display
-        dStation.updateOccupancyHubDisplay();
-
-        logger.fine("Bike with id " + bikeId + " locked on " + getInstanceName());
+        if(!isOccupied()) {
+            this.currentBike = dStation.handleDockedBike(bikeId);
+            bikeLock.lock();
+            dStation.updateOccupancyHubDisplay();
+            logger.fine("Bike with id " + bikeId + " locked on " + getInstanceName());
+        }else{
+            logger.warning("Trying to dock a bike on occupied DPoint " + getInstanceName());
+        }
     }
 
     @Override
