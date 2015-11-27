@@ -38,7 +38,6 @@ public class Hub implements HubInterface, AddDStationObserver, IssueMasterKeyObs
      * 
      */
     public Hub() {
-
         // Construct and make connections with interface devices
         terminal = new HubTerminal("ht");
         terminal.setAddStationObserver(this);
@@ -151,14 +150,14 @@ public class Hub implements HubInterface, AddDStationObserver, IssueMasterKeyObs
     /**
      * Handles a docked bike trigger (either AddBike or HireBike).
      */
-    public Bike handleDockedBike(String bikeId) {
+    public Bike handleDockedBike(String bikeId, DStation dStation) {
         logger.fine("Checking if bike with id " + bikeId + " exists.");
 
         for (Bike bike : bikeList) {
             if(bike.getBikeId().equals((bikeId))){
                 // If the bike already exists end the trip (ReturnBike).
                 logger.fine("Bike with id " + bikeId + " exists.");
-                endTrip(bike);
+                endTrip(bike, dStation);
                 return bike;
             }
         }
@@ -168,9 +167,13 @@ public class Hub implements HubInterface, AddDStationObserver, IssueMasterKeyObs
     }
 
 
-    private void endTrip(Bike bike) {
-        //TODO
-        // Return a bike code
+    private void endTrip(Bike bike, DStation endDStation) {
+        logger.fine("Ending trip of bike with id " + bike.getBikeId() + "...");
+
+        TripRecord tr = getActiveTripRecord(bike);
+        if (tr != null) {
+            tr.finaliseTripRecord(endDStation);
+        }
     }
 
     private Bike addBike(String bikeId) {
@@ -199,6 +202,7 @@ public class Hub implements HubInterface, AddDStationObserver, IssueMasterKeyObs
         }else if (user != null && !userHasActiveHire(user)) {
             logger.fine("Creating new trip record.");
             TripRecord tr = new TripRecord(bike, user, dStation);
+            tripRecordsList.add(tr);
             return true;
         }
 
@@ -227,7 +231,7 @@ public class Hub implements HubInterface, AddDStationObserver, IssueMasterKeyObs
 
         for (User u : userList) {
             if (u.getKey().equals(key)) {
-                logger.fine("Found! Key with id " + key.getKeyId() + " belongs to " + u.getName() + ".");
+                logger.fine("Found! Key with id " + key.getKeyId() + " belongs to " + u + ".");
                 return u;
             }
         }
@@ -239,7 +243,7 @@ public class Hub implements HubInterface, AddDStationObserver, IssueMasterKeyObs
      * Checks whether a User has active hires.
      */
     private boolean userHasActiveHire(User u) {
-        logger.fine("Checking whether user " + u.getName() + "has active hires or not!");
+        logger.fine("Checking whether user " + u + " has active hires or not...");
         for (TripRecord t : tripRecordsList) {
             if (t.getUser().equals(u) && t.isActive()) {
                 logger.fine("User has active hires!");
@@ -248,6 +252,19 @@ public class Hub implements HubInterface, AddDStationObserver, IssueMasterKeyObs
         }
         logger.fine("User does not have active hires!");
         return false;
+    }
+
+    private TripRecord getActiveTripRecord(Bike b) {
+        logger.fine("Getting active TripRecord for Bike with id " + b.getBikeId() + "...");
+        for (TripRecord tr : tripRecordsList) {
+            if (tr.isActive() && tr.getBike().equals(b)) {
+                logger.fine("Found trip record started in " + tr.getStartDStation().getInstanceName() + " on " + tr.getStartTime() + " by user " + tr.getUser());
+                return tr;
+            } else {
+                logger.warning("Error in trip record search! No active TripRecord with " + b.getBikeId() + " found!");
+            }
+        }
+        return null;
     }
 
     public DStation getDStation(String instanceName) {

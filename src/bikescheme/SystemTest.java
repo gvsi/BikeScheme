@@ -138,34 +138,6 @@ public class SystemTest {
     }
 
     /**
-     *  Run the "Remove Bike" use case.
-     *
-     */
-    @Test
-    public void removeBike() {
-        logger.info("Starting test: removeBike");
-
-        setupHubTerminals();
-
-
-
-    }
-
-    /**
-     *  Test dispensing a master key.
-     */
-    @Test
-    public void issueMasterKey() {
-        logger.info("Starting test: issueMasterKey");
-
-        setupHubTerminals();
-
-        input("1 07:00, HubTerminal, ht, issueMasterKey");
-        expect("1 07:00, KeyIssuer, mki, keyIssued, mki-1, master-key");
-
-    }
-
-    /**
      *  Run a show high/low occupancy test.
      *  
      *  Display event is scheduled to run only when minutes is multiple of 5,
@@ -190,11 +162,13 @@ public class SystemTest {
     }
     
     /**
-     * Simulate HireBike use case
+     * Run a test to demonstrate basic docking point interface
+     * functionality.
+     * 
      */
     @Test
     public void startHire() {
-        logger.info("Starting test: testKeyReaderAndOKLight");
+        logger.info("Starting test: HireBike");
 
         setupHubTerminals();
         setupUsers();
@@ -203,6 +177,25 @@ public class SystemTest {
         input ("2 09:30, KeyReader, A.2.kr, insertKey, A.ki-1");
         expect("2 09:30, BikeLock,  A.2.bl, unlocked");
         expect("2 09:30, OKLight,   A.2.ok, flashed");
+    }
+
+    /**
+     * Simulate HireBike use case
+     */
+    @Test
+    public void returnBike() {
+        logger.info("Starting test: ReturnBike");
+
+        setupHubTerminals();
+        setupUsers();
+        setupBikes();
+
+        input ("2 09:30, KeyReader, A.2.kr, insertKey, A.ki-1");
+        expect("2 09:30, BikeLock,  A.2.bl, unlocked");
+        expect("2 09:30, OKLight,   A.2.ok, flashed");
+
+        input ("2 10:31, BikeSensor, B.1.bs, dockBike, bike-2");
+        expect("2 10:31, BikeLock,  B.1.bl, locked");
     }
 
 

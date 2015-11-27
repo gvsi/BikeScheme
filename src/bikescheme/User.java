@@ -41,4 +41,9 @@ public class User {
         }
         return false;
     }
+
+    @Override
+    public String toString() {
+        return this.name + " (ID: " + this.userId + ")";
+    }
 }
