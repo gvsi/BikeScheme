@@ -237,6 +237,33 @@ public class SystemTest {
 
     }
 
+    /**
+     *  Test view user activity report.
+     */
+    @Test
+    public void generateUserReport() {
+        logger.info("Starting test: generateUserReport");
+
+        setupDStations();
+        setupUsers();
+        setupBikes();
+
+        input ("2 09:30, KeyReader, A.2.kr, insertKey, A.ki-1");
+        expect("2 09:30, BikeLock,  A.2.bl, unlocked");
+        expect("2 09:30, OKLight,   A.2.ok, flashed");
+
+        input ("2 10:31, BikeSensor, B.1.bs, dockBike, bike-2");
+        expect("2 10:31, BikeLock,  B.1.bl, locked");
+
+        input ("2 11:00, DSTouchScreen, A.ts, viewActivity");
+        expect("2 11:00, DSTouchScreen, A.ts, viewPrompt, Please insert key into Terminal");
+        input ("2 11:00, KeyReader, A.kr, keyInsertion, A.ki-1");
+        expect("2 11:00, DSTouchScreen, A.ts, viewUserActivity, ordered-tuples, 4,"
+                + "HireTime, HireDS, ReturnDS, Duration (min),"
+                + "2 09:30,      A,        B,             61");
+
+    }
+
     /*
      * 
      * SUPPORT CODE FOR RUNNING TESTS

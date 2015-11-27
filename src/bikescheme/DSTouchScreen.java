@@ -56,11 +56,11 @@ public class DSTouchScreen extends AbstractIODevice {
      */
     
     private StartRegObserver startRegObserver;
-    
-    public void setObserver(StartRegObserver o) {
+
+    public void setRegObserver(StartRegObserver o) {
         startRegObserver = o;
     }
-    
+
     /**
      * Model user starting a user registration operation and entering their
      * personal details.  Pass details on to the registered observer.
@@ -90,8 +90,7 @@ public class DSTouchScreen extends AbstractIODevice {
      * @param keyId
      */
     public void viewActivity() {
-        logger.fine(getInstanceName());
-        
+
         viewActivityObserver.viewActivityReceived();    
     }
     
@@ -102,8 +101,8 @@ public class DSTouchScreen extends AbstractIODevice {
      */
 
     public void showPrompt(String prompt) {
-        logger.fine(getInstanceName());
-        
+        logger.fine("Showing prompt message to user: \"" + prompt + "\"");
+
         String deviceClass = "DSTouchScreen";
         String deviceInstance = getInstanceName();
         String messageName = "viewPrompt";

@@ -54,8 +54,9 @@ public class DStation implements StartRegObserver, ViewActivityObserver {
         this.hub = hub;
 
         touchScreen = new DSTouchScreen(instanceName + ".ts");
-        touchScreen.setObserver(this);
-        
+        touchScreen.setRegObserver(this);
+        touchScreen.setViewActivityObserver(this);
+
         cardReader = new CardReader(instanceName + ".cr");
         
         keyIssuer = new KeyIssuer(instanceName + ".ki");
@@ -75,6 +76,7 @@ public class DStation implements StartRegObserver, ViewActivityObserver {
         for (DPoint dp : dockingPoints) {
             dp.setDistributor(d);
         }
+        keyReader.addDistributorLinks(d);
     }
     
     void setCollector(EventCollector c) {
@@ -132,11 +134,13 @@ public class DStation implements StartRegObserver, ViewActivityObserver {
     }
 
     public void viewActivityReceived() {
+        logger.fine("Initiating generation of user report...");
         // Prompt user to insert key
         touchScreen.showPrompt("Please insert key into Terminal");
 
         String keyId = keyReader.waitForKeyInsertion();
-        hub.generateUserActivity(keyId);
+        ArrayList userActivity = hub.generateUserActivity(keyId);
+        touchScreen.showUserActivity(userActivity);
     }
 
     public String getInstanceName() {
