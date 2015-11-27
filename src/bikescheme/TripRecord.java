@@ -20,6 +20,8 @@ public class TripRecord {
     private int charges;          // The charges for the hire in £
     private boolean isActive;       // Flags whether the hire is still active or not
 
+    private boolean extensionGranted;         // The number of extensions granted to the user
+
     public TripRecord(Bike bike, User user, DStation startDStation) {
 
         this.bike = bike;
@@ -43,13 +45,26 @@ public class TripRecord {
         // Calculates the charges for the trip
         if (this.endTime.after(this.startTime)) {
             long diff = this.endTime.getTime() - this.startTime.getTime();
-            int diffMin = (int) (diff / 1000 / 60);
+            int diffMin = (int) (diff / 1000 / 60); // difference in minutes
+
+            if (extensionGranted) {
+                if (diffMin % 30 >= 15) {
+                    diffMin -= 15; // applies extension
+                } else {
+                    diffMin = diffMin - (diffMin % 30);
+                }
+            }
+
             if (diffMin <= 30) {
                 this.charges = 1;
             } else {
                 this.charges = 1 + 2 * (int) Math.ceil((diffMin - 30)/30.0);
             }
         }
+    }
+
+    public void grantExtension() {
+        this.extensionGranted = true;
     }
 
     public User getUser() {

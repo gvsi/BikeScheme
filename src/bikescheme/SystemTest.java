@@ -69,7 +69,7 @@ public class SystemTest {
      */
     public void setupDStations() {
         input("1 07:00, HubTerminal, ht, addDStation, A,   0,   0, 20");
-        input("1 07:00, HubTerminal, ht, addDStation, B, 400, 300, 50");
+        input("1 07:00, HubTerminal, ht, addDStation, B, 400, 300, 2");
     }
 
     public void setupUsers() {
@@ -92,6 +92,12 @@ public class SystemTest {
 
         input ("1 09:30, BikeSensor, A.2.bs, dockBike, bike-2");
         expect ("1 09:30, BikeLock, A.2.bl, locked");
+
+        input ("1 09:30, BikeSensor, B.1.bs, dockBike, bike-3");
+        expect ("1 09:30, BikeLock, B.1.bl, locked");
+
+        input ("1 09:30, BikeSensor, B.2.bs, dockBike, bike-4");
+        expect ("1 09:30, BikeLock, B.2.bl, locked");
     }
 
 
@@ -162,7 +168,7 @@ public class SystemTest {
         expect("2 08:00, HubDisplay, hd, viewOccupancy, unordered-tuples, 6,"
              + "DSName, East, North, Status, #Occupied, #DPoints,"
              + "     A,    0,    0,    LOW,        2,       20,"
-             + "     B,  400,  300,    LOW,        0,       50");
+             + "     B,  400,  300,    HIGH,        2,       2");
     }
     
     /**
@@ -262,6 +268,30 @@ public class SystemTest {
                 + "HireTime, HireDS, ReturnDS, Duration (min),"
                 + "2 09:30,      A,        B,             61");
 
+    }
+
+    /**
+     *  Test FindFreePoints use case.
+     */
+    @Test
+    public void findFreePoints() {
+        logger.info("Starting test: findFreePoints");
+
+        setupDStations();
+        setupUsers();
+        setupBikes();
+
+        input ("2 09:30, KeyReader, A.2.kr, insertKey, A.ki-1");
+        expect("2 09:30, BikeLock,  A.2.bl, unlocked");
+        expect("2 09:30, OKLight,   A.2.ok, flashed");
+
+        input ("2 11:00, DSTouchScreen, B.ts, findFreePoints");
+        expect("2 11:00, DSTouchScreen, B.ts, viewPrompt, Please insert key into Terminal");
+        input ("2 11:00, KeyReader, B.kr, keyInsertion, A.ki-1");
+
+        expect("2 11:00, DSTouchScreen, B.ts, viewFreePoints, ordered-tuples, 5,"
+                + "DSName, East, North, #Occupied, #DPoints,"
+                + "     A,    0,     0,         1,       20");
     }
 
     /*
@@ -393,7 +423,7 @@ public class SystemTest {
     } 
     
     
-    /**
+    /**8
      * Inject input events in distributor queue into system and return the
      * resulting output events.
      * 

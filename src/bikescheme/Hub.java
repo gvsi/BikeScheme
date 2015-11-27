@@ -309,7 +309,7 @@ public class Hub implements HubInterface, AddDStationObserver, IssueMasterKeyObs
                 date.set(Calendar.SECOND, 0);
                 date.set(Calendar.MILLISECOND, 0);
 
-                // Add details of all the trips completed since prior midnight
+                // Add details of all the tr    ips completed since prior midnight
                 for (TripRecord tr : tripRecordsList) {
                     if (tr.getEndTime().after(date.getTime()) && !tr.isActive() && tr.getUser().equals(user)) {
                         userActivity.add(Clock.format(tr.getStartTime())); // HireTime
@@ -329,4 +329,53 @@ public class Hub implements HubInterface, AddDStationObserver, IssueMasterKeyObs
         return null;
     }
 
+    /**
+     * Find the 5 closest DStations with available docking points closest to a given DStation.
+     */
+    @Override
+    public ArrayList<String> findFreePoints(DStation dStation, String keyId) {
+        Key key = getKey(keyId);
+        User user = getUser(key);
+        if (key == null || user == null || !userHasActiveHire(user)) {
+            logger.warning("Error! Invalid key, or user, or no active trips.");
+            return null;
+        }
+
+        Map<DStation, Double> freeDPoints = new HashMap<>();
+        ArrayList<String> closestFreePoints = new ArrayList<>();
+
+        // Calculate distances
+        for (DStation ds : dockingStationMap.values()) {
+            // If the DStation is not fully occupied
+            if (ds.getOccupied() != ds.getDockingPoints().size()) {
+                double distance = Math.sqrt(Math.pow(ds.getEastPos() - dStation.getEastPos(), 2) + Math.pow(ds.getNorthPos() - dStation.getNorthPos(), 2));
+                freeDPoints.put(ds, distance);
+            }
+        }
+
+        int counter = 0;
+        while (counter < 5 && freeDPoints.size() > 0) {
+            int minDistance = Integer.MAX_VALUE;
+            DStation closestDStation = null;
+            for (DStation ds : freeDPoints.keySet()) {
+                if (freeDPoints.get(ds) < minDistance) {
+                    minDistance = freeDPoints.get(ds).intValue();
+                    closestDStation = ds;
+                }
+            }
+
+            if (closestDStation != null) {
+                closestFreePoints.add(closestDStation.getInstanceName());
+                closestFreePoints.add((Integer.toString(closestDStation.getEastPos())));
+                closestFreePoints.add((Integer.toString(closestDStation.getNorthPos())));
+                closestFreePoints.add((Integer.toString(closestDStation.getOccupied())));
+                closestFreePoints.add((Integer.toString(closestDStation.getDPointCount())));
+                counter++;
+            }
+            freeDPoints.remove(closestDStation);
+        }
+
+        return closestFreePoints;
+
+    }
 }

@@ -10,4 +10,5 @@ public interface HubInterface {
     boolean handleKeyInserted(Bike bike, DStation dStation, String keyId);
     void registerUser(String name, String keyId, String authCode);
     ArrayList<String> generateUserActivity(String keyId);
+    ArrayList<String> findFreePoints(DStation dStation, String keyId);
 }

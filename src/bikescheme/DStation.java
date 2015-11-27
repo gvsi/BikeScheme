@@ -14,7 +14,7 @@ import java.util.logging.Logger;
  * @author pbj
  *
  */
-public class DStation implements StartRegObserver, ViewActivityObserver {
+public class DStation implements StartRegObserver, ViewActivityObserver, FindFreePointObserver {
     public static final Logger logger = Logger.getLogger("bikescheme");
 
     private String instanceName;
@@ -25,9 +25,11 @@ public class DStation implements StartRegObserver, ViewActivityObserver {
     private CardReader cardReader; 
     private KeyIssuer keyIssuer;
     private KeyReader keyReader;
+
     private List<DPoint> dockingPoints;
 
     private HubInterface hub;
+
     /**
      * 
      * Construct a Docking Station object with touch screen, card reader
@@ -56,6 +58,7 @@ public class DStation implements StartRegObserver, ViewActivityObserver {
         touchScreen = new DSTouchScreen(instanceName + ".ts");
         touchScreen.setRegObserver(this);
         touchScreen.setViewActivityObserver(this);
+        touchScreen.setFindFreePointObserver(this);
 
         cardReader = new CardReader(instanceName + ".cr");
         
@@ -134,13 +137,32 @@ public class DStation implements StartRegObserver, ViewActivityObserver {
     }
 
     public void viewActivityReceived() {
-        logger.fine("Initiating generation of user report...");
+        logger.fine("Initiating generation of user report in station " + this.getInstanceName() + "...");
         // Prompt user to insert key
         touchScreen.showPrompt("Please insert key into Terminal");
 
         String keyId = keyReader.waitForKeyInsertion();
         ArrayList userActivity = hub.generateUserActivity(keyId);
         touchScreen.showUserActivity(userActivity);
+    }
+
+    public void findFreePointReceived() {
+        logger.fine("Initiating FindFreePoint in station " + this.getInstanceName() + "...");
+
+        // Allow generation of free points iff the DPoints of the DStation are all fully occupied
+        if (getOccupied() == dockingPoints.size()) {
+            // Prompt user to insert key
+            touchScreen.showPrompt("Please insert key into Terminal");
+
+            String keyId = keyReader.waitForKeyInsertion();
+
+            ArrayList freePoints = hub.findFreePoints(this, keyId);
+            if (freePoints != null)
+                touchScreen.showFreePoints(freePoints);
+        } else {
+            logger.warning("There are unoccupied DPoint(s) at the DStation!");
+        }
+
     }
 
     public String getInstanceName() {
@@ -155,4 +177,7 @@ public class DStation implements StartRegObserver, ViewActivityObserver {
         return northPos;
     }
 
+    public List<DPoint> getDockingPoints() {
+        return dockingPoints;
+    }
 }
