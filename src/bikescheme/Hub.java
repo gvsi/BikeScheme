@@ -194,12 +194,15 @@ public class Hub implements HubInterface, AddDStationObserver, IssueMasterKeyObs
     public boolean handleKeyInserted(Bike bike, DStation dStation, String keyId) {
 
         Key key = getKey(keyId);
-        User user = getUser (key);
 
         if(key.isMasterKey()) {
+            logger.fine("Removing bike with id " + bike.getBikeId() + ".");
             bikeList.remove(bike);
             return false;
-        }else if (user != null && !userHasActiveHire(user)) {
+        }
+
+        User user = getUser (key);
+        if (user != null && !userHasActiveHire(user)) {
             logger.fine("Creating new trip record.");
             TripRecord tr = new TripRecord(bike, user, dStation);
             tripRecordsList.add(tr);
