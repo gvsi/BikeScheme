@@ -67,18 +67,20 @@ public class SystemTest {
      *  in this same test class.
      *   
      */
-    public void setupHubTerminals() {
+    public void setupDStations() {
         input("1 07:00, HubTerminal, ht, addDStation, A,   0,   0, 20");
         input("1 07:00, HubTerminal, ht, addDStation, B, 400, 300, 50");
     }
 
     public void setupUsers() {
         input ("2 08:00, DSTouchScreen, A.ts, startReg, Alice");
+        expect("2 08:00, DSTouchScreen, A.ts, viewPrompt, Please authorise your bank card");
         expect("2 08:00, CardReader, A.cr, enterCardAndPin");
         input ("2 08:01, CardReader, A.cr, checkCard, Alice-card-auth");
         expect("2 08:01, KeyIssuer, A.ki, keyIssued, A.ki-1, normal-key");
 
         input ("2 08:02, DSTouchScreen, A.ts, startReg, Bob");
+        expect("2 08:02, DSTouchScreen, A.ts, viewPrompt, Please authorise your bank card");
         expect("2 08:02, CardReader, A.cr, enterCardAndPin");
         input ("2 08:03, CardReader, A.cr, checkCard, Bob-card-auth");
         expect("2 08:03, KeyIssuer, A.ki, keyIssued, A.ki-2, normal-key");
@@ -101,18 +103,20 @@ public class SystemTest {
     public void registerUser() {
         logger.info("Starting test: registerUser");
 
-        setupHubTerminals();
+        setupDStations();
         
         // Set up input and expected output.
         // Interleave input and expected output events so that sequence 
         // matches that when describing the use case main success scenario.
         
         input ("2 08:00, DSTouchScreen, A.ts, startReg, Alice");
+        expect("2 08:00, DSTouchScreen, A.ts, viewPrompt, Please authorise your bank card");
         expect("2 08:00, CardReader, A.cr, enterCardAndPin");
         input ("2 08:01, CardReader, A.cr, checkCard, Alice-card-auth");
         expect("2 08:01, KeyIssuer, A.ki, keyIssued, A.ki-1, normal-key");
 
         input ("2 08:02, DSTouchScreen, A.ts, startReg, Bob");
+        expect("2 08:02, DSTouchScreen, A.ts, viewPrompt, Please authorise your bank card");
         expect("2 08:02, CardReader, A.cr, enterCardAndPin");
         input ("2 08:03, CardReader, A.cr, checkCard, Bob-card-auth");
         expect("2 08:03, KeyIssuer, A.ki, keyIssued, A.ki-2, normal-key");
@@ -127,7 +131,7 @@ public class SystemTest {
     public void addBike() {
         logger.info("Starting test: addBike");
 
-        setupHubTerminals();
+        setupDStations();
 
         input ("1 09:30, BikeSensor, A.2.bs, dockBike, bike-1");
         expect ("1 09:30, BikeLock, A.2.bl, locked");
@@ -149,7 +153,7 @@ public class SystemTest {
     public void showHighLowOccupancy() {
         logger.info("Starting test: showHighLowOccupancy");
 
-        setupHubTerminals();
+        setupDStations();
         setupBikes();
 
         input ("2 08:00, Clock, clk, tick");
@@ -170,7 +174,7 @@ public class SystemTest {
     public void startHire() {
         logger.info("Starting test: HireBike");
 
-        setupHubTerminals();
+        setupDStations();
         setupUsers();
         setupBikes();
         
@@ -186,7 +190,7 @@ public class SystemTest {
     public void returnBike() {
         logger.info("Starting test: ReturnBike");
 
-        setupHubTerminals();
+        setupDStations();
         setupUsers();
         setupBikes();
 
@@ -198,6 +202,40 @@ public class SystemTest {
         expect("2 10:31, BikeLock,  B.1.bl, locked");
     }
 
+
+    /**
+     *  Run the "Remove Bike" use case.
+     */
+    @Test
+    public void removeBike() {
+        logger.info("Starting test: removeBike");
+
+        setupDStations();
+
+        setupBikes();
+
+        input("1 07:00, HubTerminal, ht, issueMasterKey");
+        expect("1 07:00, KeyIssuer, mki, keyIssued, mki-1, master-key");
+
+        input ("2 09:30, KeyReader, A.2.kr, insertKey, mki-1");
+        expect("2 09:30, BikeLock,  A.2.bl, unlocked");
+        expect("2 09:30, OKLight,   A.2.ok, flashed");
+
+    }
+
+    /**
+     *  Test dispensing a master key.
+     */
+    @Test
+    public void issueMasterKey() {
+        logger.info("Starting test: issueMasterKey");
+
+        setupDStations();
+
+        input("1 07:00, HubTerminal, ht, issueMasterKey");
+        expect("1 07:00, KeyIssuer, mki, keyIssued, mki-1, master-key");
+
+    }
 
     /*
      * 

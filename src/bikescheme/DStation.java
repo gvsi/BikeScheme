@@ -96,6 +96,8 @@ public class DStation implements StartRegObserver {
     public void startRegReceived(String personalInfo) {
         logger.fine("Starting registration of " + personalInfo + " on instance " + getInstanceName());
 
+        touchScreen.showPrompt("Please authorise your bank card");
+
         String authCode = cardReader.readCard();    // Pull in non-triggering input event
         logger.fine("Read card with authCode: " + authCode);
 

@@ -84,6 +84,11 @@ public class DPoint implements KeyInsertionObserver, BikeDockingObserver {
             logger.fine("Start of hire successful for bike " + currentBike.getBikeId() + " with key " + keyId + "at dStation " + dStation.getInstanceName());
             bikeLock.unlock();
             okLight.flash();
+        }else{
+            logger.fine("Bike " + currentBike.getBikeId() + " removed from the DPoint " + dStation.getInstanceName() + " using Master Key with id " + keyId);
+            bikeLock.unlock();
+            okLight.flash();
+
         }
     }
 
