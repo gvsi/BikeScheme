@@ -141,7 +141,7 @@ public class SystemTest {
 
         input ("1 09:30, BikeSensor, A.2.bs, dockBike, bike-1");
         expect ("1 09:30, BikeLock, A.2.bl, locked");
-
+        
         input ("1 09:30, BikeSensor, B.1.bs, dockBike, bike-2");
         expect ("1 09:30, BikeLock, B.1.bl, locked");
 

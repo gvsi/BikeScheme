@@ -7,6 +7,7 @@ import java.util.Date;
  * Created by gvsi on 26/11/2015.
  */
 public interface HubInterface {
+    void updateOccupancyDisplay();
     Bike handleDockedBike(String bikeId, DStation dStation);
     boolean handleKeyInserted(Bike bike, DStation dStation, String keyId);
     void registerUser(String name, String keyId, String authCode);

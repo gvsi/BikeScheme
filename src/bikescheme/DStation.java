@@ -115,6 +115,10 @@ public class DStation implements StartRegObserver, ViewActivityObserver, FindFre
         hub.registerUser(personalInfo, keyId, authCode);
     }
 
+    public void updateOccupancyHubDisplay() {
+        hub.updateOccupancyDisplay();
+    }
+
     public int getDPointCount(){
         return dockingPoints.size();
     }
@@ -180,7 +184,4 @@ public class DStation implements StartRegObserver, ViewActivityObserver, FindFre
         return northPos;
     }
 
-    public List<DPoint> getDockingPoints() {
-        return dockingPoints;
-    }
 }
