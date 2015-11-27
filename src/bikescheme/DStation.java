@@ -4,6 +4,7 @@
 package bikescheme;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -126,6 +127,8 @@ public class DStation implements StartRegObserver, ViewActivityObserver {
         }
         return i;
     }
+
+    public Date getBikeDockingTime(String bikeId) { return hub.getBikeDockingTime(bikeId); }
 
     public Bike handleDockedBike(String bikeId) { return hub.handleDockedBike(bikeId, this); }
 
