@@ -202,8 +202,8 @@ public class SystemTest {
         expect("2 09:30, BikeLock,  A.2.bl, unlocked");
         expect("2 09:30, OKLight,   A.2.ok, flashed");
 
-        input ("2 10:31, BikeSensor, B.1.bs, dockBike, bike-2");
-        expect("2 10:31, BikeLock,  B.1.bl, locked");
+        input ("2 10:31, BikeSensor, A.3.bs, dockBike, bike-2");
+        expect("2 10:31, BikeLock,  A.3.bl, locked");
     }
 
 
@@ -255,15 +255,15 @@ public class SystemTest {
         expect("2 09:30, BikeLock,  A.2.bl, unlocked");
         expect("2 09:30, OKLight,   A.2.ok, flashed");
 
-        input ("2 10:31, BikeSensor, B.1.bs, dockBike, bike-2");
-        expect("2 10:31, BikeLock,  B.1.bl, locked");
+        input ("2 10:31, BikeSensor, A.3.bs, dockBike, bike-2");
+        expect("2 10:31, BikeLock,  A.3.bl, locked");
 
         input ("2 11:00, DSTouchScreen, A.ts, viewActivity");
         expect("2 11:00, DSTouchScreen, A.ts, viewPrompt, Please insert key into Terminal");
         input ("2 11:00, KeyReader, A.kr, keyInsertion, A.ki-1");
         expect("2 11:00, DSTouchScreen, A.ts, viewUserActivity, ordered-tuples, 4,"
                 + "HireTime, HireDS, ReturnDS, Duration (min),"
-                + "2 09:30,      A,        B,             61");
+                + "2 09:30,      A,        A,             61");
 
     }
 
@@ -282,10 +282,10 @@ public class SystemTest {
         expect("2 09:30, BikeLock,  A.2.bl, unlocked");
         expect("2 09:30, OKLight,   A.2.ok, flashed");
 
-        input ("2 10:31, BikeSensor, B.1.bs, dockBike, bike-2");
-        expect("2 10:31, BikeLock,  B.1.bl, locked");
+        input ("2 10:31, BikeSensor, A.3.bs, dockBike, bike-2");
+        expect("2 10:31, BikeLock,  A.3.bl, locked");
 
-        input ("2 10:32, FaultButton, B.1.fb, reportFault");
+        input ("2 10:32, FaultButton, A.3.fb, reportFault");
 
     }
 
@@ -310,7 +310,7 @@ public class SystemTest {
 
         expect("2 11:00, DSTouchScreen, B.ts, viewFreePoints, ordered-tuples, 5,"
                 + "DSName, East, North, #Occupied, #DPoints,"
-                + "     A,    0,     0,         1,       20");
+                + "     A,    0,     0,         2,       20");
     }
 
 
