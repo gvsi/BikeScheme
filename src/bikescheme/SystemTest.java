@@ -162,12 +162,10 @@ public class SystemTest {
     }
     
     /**
-     * Run a test to demonstrate basic docking point interface
-     * functionality.
-     * 
+     * Simulate HireBike use case
      */
     @Test
-    public void testKeyReaderAndOKLight() {
+    public void startHire() {
         logger.info("Starting test: testKeyReaderAndOKLight");
 
         setupHubTerminals();
@@ -179,38 +177,6 @@ public class SystemTest {
         expect("2 09:30, OKLight,   A.2.ok, flashed");
     }
 
-
-
-    /**
-     *  Run the "Hire bike" use case.
-     *
-     */
-    @Test
-    public void startHire() {
-        logger.info("Starting test: startHire");
-
-        input ("2 09:30, KeyReader, B.2.kr, insertKey, key-2");
-
-        expect("2 09:30, OKLight,   B.2.ok, flashed");
-
-        setupHubTerminals();
-
-        // Set up input and expected output.
-        // Interleave input and expected output events so that sequence
-        // matches that when describing the use case main success scenario.
-        logger.info("registerUser");
-
-        input ("2 08:00, DSTouchScreen, A.ts, startReg, Alice");
-        expect("2 08:00, CardReader, A.cr, enterCardAndPin");
-        input ("2 08:01, CardReader, A.cr, checkCard, Alice-card-auth");
-        expect("2 08:01, KeyIssuer, A.ki, keyIssued, A.ki-1");
-
-        input ("2 08:02, DSTouchScreen, A.ts, startReg, Bob");
-        expect("2 08:02, CardReader, A.cr, enterCardAndPin");
-        input ("2 08:03, CardReader, A.cr, checkCard, Bob-card-auth");
-        expect("2 08:03, KeyIssuer, A.ki, keyIssued, A.ki-2");
-
-    }
 
     /*
      * 
