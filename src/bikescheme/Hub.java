@@ -44,6 +44,7 @@ public class Hub implements HubInterface, AddDStationObserver, IssueMasterKeyObs
         terminal = new HubTerminal("ht");
         terminal.setAddStationObserver(this);
         terminal.setIssueMasterKeyObserver(this);
+        terminal.setViewStatsObserver(this);
         display = new HubDisplay("hd");
         bankServer = new BankServer("hbs");
         dockingStationMap = new HashMap<String,DStation>();

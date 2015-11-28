@@ -33,6 +33,10 @@ public class HubTerminal extends AbstractIODevice {
     public void setIssueMasterKeyObserver(IssueMasterKeyObserver o) {
         issueMasterKeyOserver = o;
     }
+
+    public void setViewStatsObserver(ViewStatsObserver o) {
+        viewStatsObserver = o;
+    }
     
     /** 
      *    Select device action based on input event message

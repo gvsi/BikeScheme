@@ -397,6 +397,27 @@ public class SystemTest {
 
     }
 
+    /**
+     *  Run the "ViewStats" use case.
+     */
+    @Test
+    public void viewStats() {
+        logger.info("Starting test: viewStats");
+
+        setupDStations();
+        setupUsers();
+        setupBikes();
+        setupTrips();
+
+
+
+        input ("2 11:00, HubTerminal, ht, viewStats");
+        expect("2 11:00, HubDisplay, hd, showStats, unordered-tuples, 5,"
+                + "Day,      #Journeys, #Users, TotalDistanceTravelled, AverageJourneyTime,"
+                + "2 00:00,  1,         1,      0.0,                    61.0");
+
+    }
+
     /*
      * 
      * SUPPORT CODE FOR RUNNING TESTS
