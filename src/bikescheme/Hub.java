@@ -59,6 +59,7 @@ public class Hub implements HubInterface, AddDStationObserver, IssueMasterKeyObs
         // for hub code to process multiple timed notification, if needed.
 
         Clock.getInstance().scheduleNotification(
+
                 new TimedNotificationObserver() {
 
                     /**
@@ -66,33 +67,7 @@ public class Hub implements HubInterface, AddDStationObserver, IssueMasterKeyObs
                      */
                     @Override
                     public void processTimedNotification() {
-
-                        ArrayList<String> occupancyArray = new ArrayList<>();
-
-                        /**
-                         * Check DStations for more than 85% or less than 15%
-                         * and displays them accordingly.
-                         */
-                        for (String key : dockingStationMap.keySet()) {
-
-                            String status = "";
-                            if((float)dockingStationMap.get(key).getOccupied()/dockingStationMap.get(key).getDPointCount() < 0.15){
-                                status = "LOW";
-                            }else if((float)dockingStationMap.get(key).getOccupied()/dockingStationMap.get(key).getDPointCount() > 0.85){
-                                status = "HIGH";
-                            }
-
-                            if(status.length() > 0) {
-                                occupancyArray.add(key);
-                                occupancyArray.add((Integer.toString(dockingStationMap.get(key).getEastPos())));
-                                occupancyArray.add((Integer.toString(dockingStationMap.get(key).getNorthPos())));
-                                occupancyArray.add(status);
-                                occupancyArray.add((Integer.toString(dockingStationMap.get(key).getOccupied())));
-                                occupancyArray.add((Integer.toString(dockingStationMap.get(key).getDPointCount())));
-                            }
-                        }
-
-                        display.showOccupancy(occupancyArray);
+                        updateOccupancyDisplay();
                     }
 
                 },
@@ -143,6 +118,35 @@ public class Hub implements HubInterface, AddDStationObserver, IssueMasterKeyObs
                 24,
                 0);
 
+    }
+
+    public void updateOccupancyDisplay() {
+        ArrayList<String> occupancyArray = new ArrayList<>();
+
+        /**
+         * Check DStations for more than 85% or less than 15%
+         * and displays them accordingly.
+         */
+        for (String key : dockingStationMap.keySet()) {
+
+            String status = "";
+            if ((float)dockingStationMap.get(key).getOccupied()/dockingStationMap.get(key).getDPointCount() < 0.15) {
+                status = "LOW";
+            } else if((float)dockingStationMap.get(key).getOccupied()/dockingStationMap.get(key).getDPointCount() > 0.85) {
+                status = "HIGH";
+            }
+
+            if (status.length() > 0) {
+                occupancyArray.add(key);
+                occupancyArray.add((Integer.toString(dockingStationMap.get(key).getEastPos())));
+                occupancyArray.add((Integer.toString(dockingStationMap.get(key).getNorthPos())));
+                occupancyArray.add(status);
+                occupancyArray.add((Integer.toString(dockingStationMap.get(key).getOccupied())));
+                occupancyArray.add((Integer.toString(dockingStationMap.get(key).getDPointCount())));
+            }
+        }
+
+        display.showOccupancy(occupancyArray);
     }
 
     public void setDistributor(EventDistributor d) {
@@ -411,13 +415,15 @@ public class Hub implements HubInterface, AddDStationObserver, IssueMasterKeyObs
         // Calculate distances
         for (DStation ds : dockingStationMap.values()) {
             // If the DStation is not fully occupied
-            if (ds.getOccupied() != ds.getDockingPoints().size()) {
+
+            if (ds.getOccupied() != ds.getDPointCount()) {
                 double distance = Math.sqrt(Math.pow(ds.getEastPos() - dStation.getEastPos(), 2) +
                                             Math.pow(ds.getNorthPos() - dStation.getNorthPos(), 2));
                 freeDPoints.put(ds, distance);
             }
         }
 
+        // Find the 5 closest DStations
         int counter = 0;
         while (counter < 5 && freeDPoints.size() > 0) {
             int minDistance = Integer.MAX_VALUE;

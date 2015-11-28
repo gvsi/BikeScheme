@@ -81,6 +81,19 @@ public class DPoint implements KeyInsertionObserver, BikeDockingObserver, FaultB
     }
 
     /**
+     * Start hire on key insertion.
+     *
+     */
+    public void keyInserted(String keyId) {
+        if (isOccupied()) {
+            handleKeyInserted(keyId);
+        }else{
+            logger.warning("Trying to hire unoccupied DPoint " + getInstanceName());
+        }
+    }
+
+
+    /**
      * Handle startHire use case.
      * Send a message to the dStation, which sends a message to the hub to start a hire.
      * If everything is successful, unlock the bike and flash the light.
@@ -96,18 +109,9 @@ public class DPoint implements KeyInsertionObserver, BikeDockingObserver, FaultB
             okLight.flash();
             hasFaultyBike = false;
         }
-    }
 
-    /**
-     * Start hire on key insertion.
-     *
-     */
-    public void keyInserted(String keyId) {
-        if (isOccupied()) {
-            handleKeyInserted(keyId);
-        }else{
-            logger.warning("Trying to hire unoccupied DPoint " + getInstanceName());
-        }
+        // Updates the occupancy data in the hub display
+        dStation.updateOccupancyHubDisplay();
     }
 
 
@@ -121,9 +125,11 @@ public class DPoint implements KeyInsertionObserver, BikeDockingObserver, FaultB
     public void bikeDocked(String bikeId) {
         logger.fine("Start docking " + bikeId + " on " + getInstanceName());
 
+
         if(!isOccupied()) {
             this.currentBike = dStation.handleDockedBike(bikeId);
             bikeLock.lock();
+            dStation.updateOccupancyHubDisplay();
             logger.fine("Bike with id " + bikeId + " locked on " + getInstanceName());
         }else{
             logger.warning("Trying to dock a bike on occupied DPoint " + getInstanceName());
@@ -142,10 +148,10 @@ public class DPoint implements KeyInsertionObserver, BikeDockingObserver, FaultB
                 hasFaultyBike = true;
                 logger.fine("Bike with id " + currentBike.getBikeId() + " reported as faulty on DPoint " + instanceName);
             } else {
-                logger.fine("Button pressed 2 minutes or more after docking.");
+                logger.warning("Button pressed 2 minutes or more after docking.");
             }
         }else{
-            logger.fine("DPoint " + instanceName + " is not occupied.");
+            logger.warning("DPoint " + instanceName + " is not occupied.");
         }
     }
 }

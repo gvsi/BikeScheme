@@ -37,6 +37,7 @@ public class HubDisplay extends AbstractOutputDevice {
      * @param occupancyData
      */
     public void showOccupancy(List<String> occupancyData) {
+        logger.fine("Displaying occupancy on HubDisplay");
         String deviceClass = "HubDisplay";
         String deviceInstance = getInstanceName();
         String messageName = "viewOccupancy";
