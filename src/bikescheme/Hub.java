@@ -4,6 +4,7 @@
 package bikescheme;
 
 import com.sun.xml.internal.bind.v2.TODO;
+import com.sun.xml.internal.fastinfoset.algorithm.IntegerEncodingAlgorithm;
 
 import java.util.*;
 import java.util.logging.Logger;
@@ -27,6 +28,7 @@ public class Hub implements HubInterface, AddDStationObserver, IssueMasterKeyObs
     private ArrayList<TripRecord> tripRecordsList;
     private ArrayList<Bike> bikeList;
     private KeyIssuer masterKeyIssuer;
+    private BankServer bankServer;
     
     /**
      * 
@@ -43,6 +45,7 @@ public class Hub implements HubInterface, AddDStationObserver, IssueMasterKeyObs
         terminal.setAddStationObserver(this);
         terminal.setIssueMasterKeyObserver(this);
         display = new HubDisplay("hd");
+        bankServer = new BankServer("hbs");
         dockingStationMap = new HashMap<String,DStation>();
         userList = new ArrayList<>();
         keyList = new ArrayList<>();
@@ -54,22 +57,66 @@ public class Hub implements HubInterface, AddDStationObserver, IssueMasterKeyObs
 
         // The idiom of an anonymous class is used here, to make it easy
         // for hub code to process multiple timed notification, if needed.
-         
+
         Clock.getInstance().scheduleNotification(
-            new TimedNotificationObserver() {
 
-                /**
-                 * Generate a display of station occupancy data.
-                 */
-                @Override
-                public void processTimedNotification() {
-                    updateOccupancyDisplay();
-                }
+                new TimedNotificationObserver() {
 
-            },
-            Clock.getStartDate(),
-            0,
-            5);
+                    /**
+                     * Generate a display of station occupancy data.
+                     */
+                    @Override
+                    public void processTimedNotification() {
+                        updateOccupancyDisplay();
+                    }
+
+                },
+                Clock.getStartDate(),
+                0,
+                5);
+
+        Clock.getInstance().scheduleNotification(
+                new TimedNotificationObserver() {
+
+                    /**
+                     * Generate a display of station occupancy data.
+                     */
+                    @Override
+                    public void processTimedNotification() {
+
+                        ArrayList<String> chargeArray = new ArrayList<>();
+
+
+                        Calendar lastMidnight = Clock.getInstance().getDateAndTimeAsCalendar();
+                        lastMidnight.add(Calendar.DAY_OF_MONTH, -1);
+                        lastMidnight.set(Calendar.HOUR_OF_DAY, 0);
+                        lastMidnight.set(Calendar.MINUTE, 0);
+                        lastMidnight.set(Calendar.SECOND, 0);
+                        lastMidnight.set(Calendar.MILLISECOND, 0);
+
+
+                        for (TripRecord tr : tripRecordsList){
+                            if (tr.getEndTime().after(lastMidnight.getTime()) && !tr.isActive()) {
+                                if(chargeArray.contains(tr.getUser().getName())){
+                                    int userChargeIndex = chargeArray.indexOf(tr.getUser().getName()) + 2;
+                                    chargeArray.set(userChargeIndex + 2, chargeArray.get(userChargeIndex) + tr.getCharges());
+                                }else {
+                                    chargeArray.add(tr.getUser().getName()); // User Name
+                                    chargeArray.add(tr.getUser().getName()); // Bank authorisation code
+                                    chargeArray.add(Integer.toString(tr.getCharges())); // Amount charged
+                                }
+
+                            }
+                        }
+
+
+                        bankServer.chargeUsers(chargeArray);
+                    }
+
+                },
+                Clock.getStartDate(),
+                24,
+                0);
 
     }
 
@@ -389,15 +436,15 @@ public class Hub implements HubInterface, AddDStationObserver, IssueMasterKeyObs
                 ArrayList<String> userActivity = new ArrayList<>();
 
                 // Calculate midnight of today
-                Calendar date = Clock.getInstance().getDateAndTimeAsCalendar();
-                date.set(Calendar.HOUR_OF_DAY, 0);
-                date.set(Calendar.MINUTE, 0);
-                date.set(Calendar.SECOND, 0);
-                date.set(Calendar.MILLISECOND, 0);
+                Calendar midnight = Clock.getInstance().getDateAndTimeAsCalendar();
+                midnight.set(Calendar.HOUR_OF_DAY, 0);
+                midnight.set(Calendar.MINUTE, 0);
+                midnight.set(Calendar.SECOND, 0);
+                midnight.set(Calendar.MILLISECOND, 0);
 
-                // Add details of all the tr    ips completed since prior midnight
+                // Add details of all the trips completed since prior midnight
                 for (TripRecord tr : tripRecordsList) {
-                    if (tr.getEndTime().after(date.getTime()) && !tr.isActive() && tr.getUser().equals(user)) {
+                    if (tr.getEndTime().after(midnight.getTime()) && !tr.isActive() && tr.getUser().equals(user)) {
                         userActivity.add(Clock.format(tr.getStartTime())); // HireTime
                         userActivity.add(tr.getStartDStation().getInstanceName()); // HireDS
                         userActivity.add(tr.getEndDStation().getInstanceName()); // ReturnDS
@@ -433,8 +480,10 @@ public class Hub implements HubInterface, AddDStationObserver, IssueMasterKeyObs
         // Calculate distances
         for (DStation ds : dockingStationMap.values()) {
             // If the DStation is not fully occupied
+
             if (ds.getOccupied() != ds.getDPointCount()) {
-                double distance = Math.sqrt(Math.pow(ds.getEastPos() - dStation.getEastPos(), 2) + Math.pow(ds.getNorthPos() - dStation.getNorthPos(), 2));
+                double distance = Math.sqrt(Math.pow(ds.getEastPos() - dStation.getEastPos(), 2) +
+                                            Math.pow(ds.getNorthPos() - dStation.getNorthPos(), 2));
                 freeDPoints.put(ds, distance);
             }
         }
