@@ -100,6 +100,15 @@ public class SystemTest {
         expect ("1 09:30, BikeLock, B.2.bl, locked");
     }
 
+    public void setupTrips(){
+        input ("2 09:30, KeyReader, A.2.kr, insertKey, A.ki-1");
+        expect("2 09:30, BikeLock,  A.2.bl, unlocked");
+        expect("2 09:30, OKLight,   A.2.ok, flashed");
+
+        input ("2 10:31, BikeSensor, A.3.bs, dockBike, bike-2");
+        expect("2 10:31, BikeLock,  A.3.bl, locked");
+    }
+
 
     /**
      *  Run the "Register User" use case.
@@ -250,13 +259,7 @@ public class SystemTest {
         setupDStations();
         setupUsers();
         setupBikes();
-
-        input ("2 09:30, KeyReader, A.2.kr, insertKey, A.ki-1");
-        expect("2 09:30, BikeLock,  A.2.bl, unlocked");
-        expect("2 09:30, OKLight,   A.2.ok, flashed");
-
-        input ("2 10:31, BikeSensor, A.3.bs, dockBike, bike-2");
-        expect("2 10:31, BikeLock,  A.3.bl, locked");
+        setupTrips();
 
         input ("2 11:00, DSTouchScreen, A.ts, viewActivity");
         expect("2 11:00, DSTouchScreen, A.ts, viewPrompt, Please insert key into Terminal");
@@ -277,20 +280,15 @@ public class SystemTest {
         setupDStations();
         setupUsers();
         setupBikes();
+        setupTrips();
 
-        input ("2 09:30, KeyReader, A.2.kr, insertKey, A.ki-1");
-        expect("2 09:30, BikeLock,  A.2.bl, unlocked");
-        expect("2 09:30, OKLight,   A.2.ok, flashed");
-
-        input ("2 10:31, BikeSensor, A.3.bs, dockBike, bike-2");
-        expect("2 10:31, BikeLock,  A.3.bl, locked");
 
         input ("2 10:32, FaultButton, A.3.fb, reportFault");
 
     }
 
     /**
-     *  Test FindFreePoints use case.
+     *  Run the "Find Free Points" use case.
      */
     @Test
     public void findFreePoints() {
@@ -313,6 +311,29 @@ public class SystemTest {
                 + "     A,    0,     0,         2,       20");
     }
 
+    /**
+     *  Run the "Charge User" use case.
+     *
+     * Charge event is scheduled to run every 24 hours,
+     * so only one of the input events should trigger the Charge.
+     *
+     */
+    @Test
+    public void chargeUser() {
+        logger.info("Starting test: findFreePoints");
+
+        setupDStations();
+        setupUsers();
+        setupBikes();
+        setupTrips();
+
+        input ("2 1:00, Clock, clk, tick");
+        input ("3 0:00, Clock, clk, tick");
+        expect("2 00:00, BankServer, hbs, chargeUsers, unordered-tuples, 3,"
+                + "User Name, Bank authorisation code, Amount charged,"
+                + "    Alice,         Alice-card-auth,              5");
+
+    }
 
     /*
      * 

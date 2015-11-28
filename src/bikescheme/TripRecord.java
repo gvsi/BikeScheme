@@ -17,6 +17,11 @@ public class TripRecord {
     private Date startTime;         // The time of the start of the hire
 
     private Date endTime;           // The time of the end of the hire
+
+    public int getCharges() {
+        return charges;
+    }
+
     private int charges;          // The charges for the hire in £
     private boolean isActive;       // Flags whether the hire is still active or not
 

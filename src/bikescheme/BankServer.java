@@ -20,33 +20,30 @@ public class BankServer extends AbstractOutputDevice {
     }
     
     /**
-     * Generate presentation on display of occupancy of all
-     * docking stations, highlighting those with 
-     * high (> 85%) or low (< 15%) occupancy.
+     * Charge users for their trips in the last 24 hours.
      * 
-     * Each tuple shows the status at one of the stations.
+     * Each tuple shows the transactions.
      * The tuple fields are:
      * 
-     *   DSName    - docking station name
-     *   East      - position in metres East (+) or West (-) 
-     *   North     - position in metres North (+) or South (-)
-     *   Status    - HIGH, OK or LOW.
-     *   #Occupied - number of docking points occupied 
-     *   #DPoints  - total number of docking points
+     *   User Name                   - user charged
+     *   Bank authorisation code     - the card's authorisation code
+     *   Amount charged              - amount of pounds the user is charged.
+
      * 
-     * @param occupancyData
+     * @param chargeData
      */
-    public void showOccupancy(List<String> occupancyData) {
-        String deviceClass = "HubDisplay";
+
+    public void chargeUsers(List<String> chargeData) {
+        String deviceClass = "BankServer";
         String deviceInstance = getInstanceName();
-        String messageName = "viewOccupancy";
+        String messageName = "chargeUsers";
         
         List<String> messageArgs = new ArrayList<String>();
         String[] preludeArgs = 
-            {"unordered-tuples","6",
-             "DSName","East","North","Status","#Occupied","#DPoints"};
+            {"unordered-tuples","3",
+             "User Name","Bank authorisation code","Amount charged"};
         messageArgs.addAll(Arrays.asList(preludeArgs));
-        messageArgs.addAll(occupancyData);
+        messageArgs.addAll(chargeData);
         
         super.sendEvent(
             new Event(
