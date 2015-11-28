@@ -16,7 +16,7 @@ import java.util.logging.Logger;
  * @author pbj
  *
  */
-public class Hub implements HubInterface, AddDStationObserver, IssueMasterKeyObserver {
+public class Hub implements HubInterface, AddDStationObserver, IssueMasterKeyObserver, ViewStatsObserver {
     public static final Logger logger = Logger.getLogger("bikescheme");
 
     private HubTerminal terminal;
@@ -150,6 +150,67 @@ public class Hub implements HubInterface, AddDStationObserver, IssueMasterKeyObs
         newDStation.setCollector(c);
     }
 
+    @Override
+    public void viewStats() {
+        ArrayList<String> stats = new ArrayList<>();
+
+        // first day with a TripRecord and change time to midnight
+        Calendar firstDay = Calendar.getInstance();
+        firstDay.setTime(tripRecordsList.get(0).getStartTime());
+        firstDay.set(Calendar.HOUR_OF_DAY, 0);
+        firstDay.set(Calendar.MINUTE, 0);
+        firstDay.set(Calendar.SECOND, 0);
+        firstDay.set(Calendar.MILLISECOND, 0);
+
+        // initialise currentDay to firstDay
+        Calendar currentDay = firstDay;
+
+        // while the currentDay is before the current time
+        while (currentDay.before(Clock.getInstance().getDateAndTimeAsCalendar())) {
+            int numberOfTrips = 0;
+            Set<User> users = new HashSet<>();
+            double totalDistanceTravelled = 0;
+            int totalTripTime = 0;
+
+            for (TripRecord tr : tripRecordsList) {
+                Calendar tripEndDate = Calendar.getInstance();
+                tripEndDate.setTime(tr.getEndTime());
+
+                // get TripRecords of the day
+                if (tripEndDate.get(Calendar.DAY_OF_YEAR) == currentDay.get(Calendar.DAY_OF_YEAR)) {
+
+                    // number of journeys on the day
+                    numberOfTrips++;
+
+                    // number of unique users on the day
+                    users.add(tr.getUser());
+
+                    // total distance travelled on the day
+                    totalDistanceTravelled += Math.sqrt(Math.pow(tr.getStartDStation().getEastPos() - tr.getEndDStation().getEastPos(), 2) +
+                                                        Math.pow(tr.getStartDStation().getNorthPos() - tr.getEndDStation().getNorthPos(), 2));
+
+                    // total distance travelled on the day
+                    totalTripTime += Clock.minutesBetween(tr.getStartTime(), tr.getEndTime());
+
+                }
+            }
+
+            // Add stats of the trip if there are trips on that day
+            if (numberOfTrips > 0) {
+                stats.add(Clock.format(currentDay.getTime())); // Day
+                stats.add(Integer.toString(numberOfTrips));    // #Journeys
+                stats.add(Integer.toString(users.size()));     // #Users
+                stats.add(Double.toString(totalDistanceTravelled));     // TotalDistanceTravelled
+                stats.add(Float.toString((float) totalTripTime / numberOfTrips));  // AverageJourneyTime
+            }
+
+            // check next day
+            currentDay.add(Calendar.DATE, 1);
+        }
+
+        display.showStats(stats);
+    }
+
     /**
      * Handles a docked bike trigger (either AddBike or HireBike).
      */
@@ -264,7 +325,8 @@ public class Hub implements HubInterface, AddDStationObserver, IssueMasterKeyObs
         logger.fine("Getting active TripRecord for Bike with id " + b.getBikeId() + "...");
         for (TripRecord tr : tripRecordsList) {
             if (tr.isActive() && tr.getBike().equals(b)) {
-                logger.fine("Found trip record started in " + tr.getStartDStation().getInstanceName() + " on " + tr.getStartTime() + " by user " + tr.getUser());
+                logger.fine("Found trip record started in " + tr.getStartDStation().getInstanceName() + " on " +
+                        tr.getStartTime() + " by user " + tr.getUser());
                 return tr;
             } else {
                 logger.warning("Error in trip record search! No active TripRecord with " + b.getBikeId() + " found!");
@@ -277,6 +339,9 @@ public class Hub implements HubInterface, AddDStationObserver, IssueMasterKeyObs
         return dockingStationMap.get(instanceName);
     }
 
+    /**
+     * Issue master key for personnel (from IssueMasterKeyObserver)
+     */
     @Override
     public void issueMasterKey() {
         masterKeyIssuer = new KeyIssuer("mki");

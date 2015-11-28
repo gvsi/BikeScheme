@@ -56,6 +56,27 @@ public class HubDisplay extends AbstractOutputDevice {
                 deviceInstance,
                 messageName,
                 messageArgs));
-        
+    }
+
+    public void showStats(List<String> occupancyData) {
+        logger.fine("Displaying stats on HubDisplay");
+        String deviceClass = "HubDisplay";
+        String deviceInstance = getInstanceName();
+        String messageName = "showStats";
+
+        List<String> messageArgs = new ArrayList<String>();
+        String[] preludeArgs =
+                {"unordered-tuples","5",
+                        "Day", "#Journeys","#Users","TotalDistanceTravelled","AverageJourneyTime"};
+        messageArgs.addAll(Arrays.asList(preludeArgs));
+        messageArgs.addAll(occupancyData);
+
+        super.sendEvent(
+                new Event(
+                        Clock.getInstance().getDateAndTime(),
+                        deviceClass,
+                        deviceInstance,
+                        messageName,
+                        messageArgs));
     }
 }

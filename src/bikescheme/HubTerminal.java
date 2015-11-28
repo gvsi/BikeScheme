@@ -24,6 +24,7 @@ public class HubTerminal extends AbstractIODevice {
     
     private AddDStationObserver addStationObserver;
     private IssueMasterKeyObserver issueMasterKeyOserver;
+    private ViewStatsObserver viewStatsObserver;
     
     public void setAddStationObserver(AddDStationObserver o) {
         addStationObserver = o;
@@ -56,18 +57,14 @@ public class HubTerminal extends AbstractIODevice {
 
             issueMasterKey();
 
+        }  else if (e.getMessageName().equals("viewStats")
+                && e.getMessageArgs().size() == 0){
+
+            viewStats();
+
         } else {
             super.receiveEvent(e);
         }
-    }
-
-    /**
-     * Handle request to create a new master key
-     */
-    private void issueMasterKey() {
-        logger.fine("Initiating master key dispense procedure.");
-
-        issueMasterKeyOserver.issueMasterKey();
     }
 
     /**
@@ -82,6 +79,24 @@ public class HubTerminal extends AbstractIODevice {
 
 
         addStationObserver.addDStation(instanceName, eastPos, northPos, numPoints);
+    }
+
+    /**
+     * Handle request to create a new master key
+     */
+    private void issueMasterKey() {
+        logger.fine("Initiating master key dispense procedure.");
+
+        issueMasterKeyOserver.issueMasterKey();
+    }
+
+    /**
+     * Handle request to view stats of the schema
+     */
+    private void viewStats() {
+        logger.fine("Initiating master key dispense procedure.");
+
+        viewStatsObserver.viewStats();
     }
     
     
