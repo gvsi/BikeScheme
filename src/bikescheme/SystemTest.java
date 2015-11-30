@@ -225,7 +225,7 @@ public class SystemTest {
         setupDStations();
         setupUsers();
         setupBikes();
-        
+
         input ("2 09:30, KeyReader, A.2.kr, insertKey, A.ki-1");
         expect("2 09:30, BikeLock,  A.2.bl, unlocked");
         expect("2 09:30, OKLight,   A.2.ok, flashed");
@@ -517,7 +517,7 @@ public class SystemTest {
         
         // Create a hub object with interface devices.
         
-                Hub hub = new Hub();
+                Hub hub = Hub.getInstance();
                 
         // Connect up hub interface devices to event framework
                 
@@ -600,5 +600,10 @@ public class SystemTest {
         assertTrue("Expected and actual output events differ",
                 Event.listEqual(expectedEvents, actualEvents));
                
+    }
+
+    @After
+    public void resetHubInstance() {
+        Hub.resetInstance();
     }
 }

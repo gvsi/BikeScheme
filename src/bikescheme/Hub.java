@@ -11,14 +11,16 @@ import java.util.logging.Logger;
 
 /**
  *  
- * Hub system.
+ * Hub system. (singleton class)
  *
  * 
- * @author pbj
  *
  */
-public class Hub implements HubInterface, AddDStationObserver, IssueMasterKeyObserver, ViewStatsObserver {
+public final class Hub implements HubInterface, AddDStationObserver, IssueMasterKeyObserver, ViewStatsObserver {
     public static final Logger logger = Logger.getLogger("bikescheme");
+
+    // Holds the unique instance of the Hub
+    private static Hub instance = null;
 
     private HubTerminal terminal;
     private HubDisplay display;
@@ -39,7 +41,7 @@ public class Hub implements HubInterface, AddDStationObserver, IssueMasterKeyObs
      * docking station occupancy data.
      * 
      */
-    public Hub() {
+    private Hub() {
         // Construct and make connections with interface devices
         terminal = new HubTerminal("ht");
         terminal.setAddStationObserver(this);
@@ -121,6 +123,17 @@ public class Hub implements HubInterface, AddDStationObserver, IssueMasterKeyObs
 
     }
 
+    public static Hub getInstance() {
+        if(instance == null) {
+            instance = new Hub();
+        }
+        return instance;
+    }
+
+    public static void resetInstance() {
+        instance = null;
+    }
+
     public void updateOccupancyDisplay() {
         ArrayList<String> occupancyArray = new ArrayList<>();
 
@@ -200,6 +213,7 @@ public class Hub implements HubInterface, AddDStationObserver, IssueMasterKeyObs
 
     @Override
     public void viewStats() {
+        logger.fine("Generating stats to display...");
         ArrayList<String> stats = new ArrayList<>();
 
         // first day with a TripRecord and change time to midnight
