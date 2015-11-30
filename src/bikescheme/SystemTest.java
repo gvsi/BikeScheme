@@ -90,33 +90,15 @@ public class SystemTest {
         input ("1 09:30, BikeSensor, A.1.bs, dockBike, bike-1");
         expect ("1 09:30, BikeLock, A.1.bl, locked");
 
-        expect("1 09:30, HubDisplay, hd, viewOccupancy, unordered-tuples, 6,"
-                + "DSName, East, North, Status, #Occupied, #DPoints,"
-                + "     A,    0,    0,    LOW,        1,       20,"
-                + "     B,  400,  300,    LOW,       0,       2");
-
         input ("1 09:30, BikeSensor, A.2.bs, dockBike, bike-2");
         expect ("1 09:30, BikeLock, A.2.bl, locked");
-
-        expect("1 09:30, HubDisplay, hd, viewOccupancy, unordered-tuples, 6,"
-                + "DSName, East, North, Status, #Occupied, #DPoints,"
-                + "     A,    0,    0,    LOW,        2,       20,"
-                + "     B,  400,  300,    LOW,       0,       2");
 
         input ("1 09:30, BikeSensor, B.1.bs, dockBike, bike-3");
         expect ("1 09:30, BikeLock, B.1.bl, locked");
 
-        expect("1 09:30, HubDisplay, hd, viewOccupancy, unordered-tuples, 6,"
-                + "DSName, East, North, Status, #Occupied, #DPoints,"
-                + "     A,    0,    0,    LOW,        2,       20");
-
         input ("1 09:30, BikeSensor, B.2.bs, dockBike, bike-4");
         expect ("1 09:30, BikeLock, B.2.bl, locked");
 
-        expect("1 09:30, HubDisplay, hd, viewOccupancy, unordered-tuples, 6,"
-                + "DSName, East, North, Status, #Occupied, #DPoints,"
-                + "     A,    0,    0,    LOW,        2,       20,"
-                + "     B,  400,  300,    HIGH,       2,       2");
     }
 
     public void setupTrips(){
@@ -124,17 +106,9 @@ public class SystemTest {
         expect("2 09:30, BikeLock,  A.2.bl, unlocked");
         expect("2 09:30, OKLight,   A.2.ok, flashed");
 
-        expect("2 09:30, HubDisplay, hd, viewOccupancy, unordered-tuples, 6,"
-                + "DSName, East, North, Status, #Occupied, #DPoints,"
-                + "     A,    0,    0,    LOW,        2,       20,"
-                + "     B,  400,  300,    HIGH,       2,       2");
-
         input ("2 10:31, BikeSensor, A.3.bs, dockBike, bike-2");
         expect("2 10:31, BikeLock,  A.3.bl, locked");
 
-        expect("2 10:31, HubDisplay, hd, viewOccupancy, unordered-tuples, 6,"
-                + "DSName, East, North, Status, #Occupied, #DPoints,"
-                + "     B,  400,  300,    HIGH,       2,       2");
     }
 
 
@@ -178,16 +152,9 @@ public class SystemTest {
 
         input ("1 09:30, BikeSensor, A.2.bs, dockBike, bike-1");
         expect ("1 09:30, BikeLock, A.2.bl, locked");
-        expect("1 09:30, HubDisplay, hd, viewOccupancy, unordered-tuples, 6,"
-                + "DSName, East, North, Status, #Occupied, #DPoints,"
-                + "     A,    0,    0,    LOW,        1,       20,"
-                + "     B,  400,  300,    LOW,       0,       2");
 
         input ("1 09:30, BikeSensor, B.1.bs, dockBike, bike-2");
         expect ("1 09:30, BikeLock, B.1.bl, locked");
-        expect("1 09:30, HubDisplay, hd, viewOccupancy, unordered-tuples, 6,"
-                + "DSName, East, North, Status, #Occupied, #DPoints,"
-                + "     A,    0,    0,    LOW,        1,       20");
 
     }
 
@@ -230,12 +197,6 @@ public class SystemTest {
         expect("2 09:30, BikeLock,  A.2.bl, unlocked");
         expect("2 09:30, OKLight,   A.2.ok, flashed");
 
-        expect("2 09:30, HubDisplay, hd, viewOccupancy, unordered-tuples, 6,"
-                + "DSName, East, North, Status, #Occupied, #DPoints,"
-                + "     A,    0,    0,    LOW,        2,       20,"
-                + "     B,  400,  300,    HIGH,       2,       2");
-
-
     }
 
     /**
@@ -253,16 +214,8 @@ public class SystemTest {
         expect("2 09:30, BikeLock,  A.2.bl, unlocked");
         expect("2 09:30, OKLight,   A.2.ok, flashed");
 
-        expect("2 09:30, HubDisplay, hd, viewOccupancy, unordered-tuples, 6,"
-                + "DSName, East, North, Status, #Occupied, #DPoints,"
-                + "     A,    0,    0,    LOW,        2,       20,"
-                + "     B,  400,  300,    HIGH,       2,       2");
-
         input ("2 10:31, BikeSensor, A.3.bs, dockBike, bike-2");
         expect("2 10:31, BikeLock,  A.3.bl, locked");
-        expect("2 10:31, HubDisplay, hd, viewOccupancy, unordered-tuples, 6,"
-                + "DSName, East, North, Status, #Occupied, #DPoints,"
-                + "     B,  400,  300,    HIGH,       2,       2");
     }
 
 
@@ -282,12 +235,6 @@ public class SystemTest {
         input ("2 09:30, KeyReader, A.2.kr, insertKey, mki-1");
         expect("2 09:30, BikeLock,  A.2.bl, unlocked");
         expect("2 09:30, OKLight,   A.2.ok, flashed");
-
-        expect("2 09:30, HubDisplay, hd, viewOccupancy, unordered-tuples, 6,"
-                + "DSName, East, North, Status, #Occupied, #DPoints,"
-                + "     A,    0,    0,    LOW,        2,       20,"
-                + "     B,  400,  300,    HIGH,       2,       2");
-
 
     }
 
@@ -358,11 +305,6 @@ public class SystemTest {
         input ("2 09:30, KeyReader, A.2.kr, insertKey, A.ki-1");
         expect("2 09:30, BikeLock,  A.2.bl, unlocked");
         expect("2 09:30, OKLight,   A.2.ok, flashed");
-
-        expect("2 09:30, HubDisplay, hd, viewOccupancy, unordered-tuples, 6,"
-                + "DSName, East, North, Status, #Occupied, #DPoints,"
-                + "     A,    0,    0,    LOW,        2,       20,"
-                + "     B,  400,  300,    HIGH,       2,       2");
 
         input ("2 11:00, DSTouchScreen, B.ts, findFreePoints");
         expect("2 11:00, DSTouchScreen, B.ts, viewPrompt, Please insert key into Terminal");

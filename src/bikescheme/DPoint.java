@@ -109,9 +109,6 @@ public class DPoint implements KeyInsertionObserver, BikeDockingObserver, FaultB
             okLight.flash();
             hasFaultyBike = false;
         }
-
-        // Updates the occupancy data in the hub display
-        dStation.updateOccupancyHubDisplay();
     }
 
 
@@ -129,7 +126,6 @@ public class DPoint implements KeyInsertionObserver, BikeDockingObserver, FaultB
         if(!isOccupied()) {
             this.currentBike = dStation.handleDockedBike(bikeId);
             bikeLock.lock();
-            dStation.updateOccupancyHubDisplay();
             logger.fine("Bike with id " + bikeId + " locked on " + getInstanceName());
         }else{
             logger.warning("Trying to dock a bike on occupied DPoint " + getInstanceName());
