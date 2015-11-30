@@ -49,8 +49,7 @@ public class DStation implements StartRegObserver, ViewActivityObserver, FindFre
             int numPoints,
             Hub hub) {
         
-     // Construct and make connections with interface devices
-        
+        // Construct and make connections with interface devices
         this.instanceName = instanceName;
         this.eastPos = eastPos;
         this.northPos = northPos;
@@ -139,6 +138,9 @@ public class DStation implements StartRegObserver, ViewActivityObserver, FindFre
         return hub.handleKeyInserted(bike, dStation, keyId);
     }
 
+    /**
+     * Handles the view activity event (implements from ViewActivityObserver)
+     */
     public void viewActivityReceived() {
         logger.fine("Initiating generation of user report in station " + this.getInstanceName() + "...");
         // Prompt user to insert key
@@ -149,6 +151,9 @@ public class DStation implements StartRegObserver, ViewActivityObserver, FindFre
         touchScreen.showUserActivity(userActivity);
     }
 
+    /**
+     * Handles the find free points event (implements from FindFreePointObserver)
+     */
     public void findFreePointReceived() {
         logger.fine("Initiating FindFreePoint in station " + this.getInstanceName() + "...");
 

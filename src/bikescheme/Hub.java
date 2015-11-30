@@ -3,20 +3,15 @@
  */
 package bikescheme;
 
-import com.sun.xml.internal.bind.v2.TODO;
-import com.sun.xml.internal.fastinfoset.algorithm.IntegerEncodingAlgorithm;
-
 import java.util.*;
 import java.util.logging.Logger;
 
 /**
  *  
- * Hub system. (singleton class)
- *
- * 
+ * Hub system. (Singleton class)
  *
  */
-public final class Hub implements HubInterface, AddDStationObserver, IssueMasterKeyObserver, ViewStatsObserver {
+public class Hub implements HubInterface, AddDStationObserver, IssueMasterKeyObserver, ViewStatsObserver {
     public static final Logger logger = Logger.getLogger("bikescheme");
 
     // Holds the unique instance of the Hub
@@ -123,6 +118,7 @@ public final class Hub implements HubInterface, AddDStationObserver, IssueMaster
 
     }
 
+    // Gets the instance of the Hub. If it doesn't exist it initialises it.
     public static Hub getInstance() {
         if(instance == null) {
             instance = new Hub();
@@ -134,13 +130,13 @@ public final class Hub implements HubInterface, AddDStationObserver, IssueMaster
         instance = null;
     }
 
+    /**
+     * Check DStations for more than 85% or less than 15%
+     * and displays them accordingly.
+     */
     public void updateOccupancyDisplay() {
         ArrayList<String> occupancyArray = new ArrayList<>();
 
-        /**
-         * Check DStations for more than 85% or less than 15%
-         * and displays them accordingly.
-         */
         for (String key : dockingStationMap.keySet()) {
 
             String status = "";
@@ -190,7 +186,7 @@ public final class Hub implements HubInterface, AddDStationObserver, IssueMaster
     }
 
     /**
-     * Add a DStation to the system
+     * Add a DStation to the system (implements from AddDStationObserver interface)
      */
     @Override
     public void addDStation(
@@ -212,6 +208,9 @@ public final class Hub implements HubInterface, AddDStationObserver, IssueMaster
         newDStation.setCollector(c);
     }
 
+    /**
+     * Generates the stats to display at the Hub (implements from ViewStatsObserver interface)
+     */
     @Override
     public void viewStats() {
         logger.fine("Generating stats to display...");
@@ -231,7 +230,7 @@ public final class Hub implements HubInterface, AddDStationObserver, IssueMaster
         // while the currentDay is before the current time
         while (currentDay.before(Clock.getInstance().getDateAndTimeAsCalendar())) {
             int numberOfTrips = 0;
-            Set<User> users = new HashSet<>();
+            Set<User> userRegistered = new HashSet<>();
             double totalDistanceTravelled = 0;
             int totalTripTime = 0;
 
@@ -246,7 +245,7 @@ public final class Hub implements HubInterface, AddDStationObserver, IssueMaster
                     numberOfTrips++;
 
                     // number of unique users on the day
-                    users.add(tr.getUser());
+                    userRegistered.add(tr.getUser());
 
                     // total distance travelled on the day
                     totalDistanceTravelled += Math.sqrt(Math.pow(tr.getStartDStation().getEastPos() - tr.getEndDStation().getEastPos(), 2) +
@@ -262,7 +261,7 @@ public final class Hub implements HubInterface, AddDStationObserver, IssueMaster
             if (numberOfTrips > 0) {
                 stats.add(Clock.format(currentDay.getTime())); // Day
                 stats.add(Integer.toString(numberOfTrips));    // #Journeys
-                stats.add(Integer.toString(users.size()));     // #Users
+                stats.add(Integer.toString(userRegistered.size()));     // #Users
                 stats.add(Double.toString(totalDistanceTravelled));     // TotalDistanceTravelled
                 stats.add(Float.toString((float) totalTripTime / numberOfTrips));  // AverageJourneyTime
             }
@@ -271,6 +270,7 @@ public final class Hub implements HubInterface, AddDStationObserver, IssueMaster
             currentDay.add(Calendar.DATE, 1);
         }
 
+        logger.fine("Stats generated successfully!");
         display.showStats(stats);
     }
 
@@ -293,7 +293,9 @@ public final class Hub implements HubInterface, AddDStationObserver, IssueMaster
         return addBike(bikeId);
     }
 
-
+    /**
+     * Ends the trip by updating and finalising the TripRecord
+     */
     private void endTrip(Bike bike, DStation endDStation) {
         logger.fine("Ending trip of bike with id " + bike.getBikeId() + "...");
 
@@ -303,6 +305,9 @@ public final class Hub implements HubInterface, AddDStationObserver, IssueMaster
         }
     }
 
+    /**
+     * Adds a new bike to the system.
+     */
     private Bike addBike(String bikeId) {
         logger.fine("Bike with id " + bikeId + " does not exist.");
 
@@ -384,6 +389,9 @@ public final class Hub implements HubInterface, AddDStationObserver, IssueMaster
         return false;
     }
 
+    /**
+     * Returns the active trip record which has has been created with a particular bike.
+     */
     private TripRecord getActiveTripRecord(Bike b) {
         logger.fine("Getting active TripRecord for Bike with id " + b.getBikeId() + "...");
         for (TripRecord tr : tripRecordsList) {
@@ -403,7 +411,7 @@ public final class Hub implements HubInterface, AddDStationObserver, IssueMaster
     }
 
     /**
-     * Issue master key for personnel (from IssueMasterKeyObserver)
+     * Issue master key for personnel (implements from IssueMasterKeyObserver interface)
      */
     @Override
     public void issueMasterKey() {
@@ -480,6 +488,7 @@ public final class Hub implements HubInterface, AddDStationObserver, IssueMaster
 
     /**
      * Find the 5 closest DStations with available docking points closest to a given DStation.
+     * If there are less than 5 docking stations in the system it just returns all of them.
      */
     @Override
     public ArrayList<String> findFreePoints(DStation dStation, String keyId) {
