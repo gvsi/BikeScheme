@@ -389,8 +389,12 @@ public class SystemTest {
         setupBikes();
         setupTrips();
 
-        input ("2 1:00, Clock, clk, tick");
-        input ("3 0:00, Clock, clk, tick");
+        input ("2 00:00, Clock, clk, tick");
+        expect("2 00:00, HubDisplay, hd, viewOccupancy, unordered-tuples, 6,"
+                + "DSName, East, North, Status, #Occupied, #DPoints,"
+                + "     B,  400,  300,    HIGH,       2,       2");
+
+
         expect("2 00:00, BankServer, hbs, chargeUsers, unordered-tuples, 3,"
                 + "User Name, Bank authorisation code, Amount charged,"
                 + "    Alice,         Alice-card-auth,              5");

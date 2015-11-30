@@ -99,13 +99,13 @@ public final class Hub implements HubInterface, AddDStationObserver, IssueMaster
 
 
                         for (TripRecord tr : tripRecordsList){
-                            if (tr.getEndTime().after(lastMidnight.getTime()) && !tr.isActive()) {
+                            if (!tr.isActive() && tr.getEndTime().after(lastMidnight.getTime())) {
                                 if(chargeArray.contains(tr.getUser().getName())){
                                     int userChargeIndex = chargeArray.indexOf(tr.getUser().getName()) + 2;
                                     chargeArray.set(userChargeIndex + 2, chargeArray.get(userChargeIndex) + tr.getCharges());
                                 }else {
                                     chargeArray.add(tr.getUser().getName()); // User Name
-                                    chargeArray.add(tr.getUser().getName()); // Bank authorisation code
+                                    chargeArray.add(tr.getUser().getAuthCode()); // Bank authorisation code
                                     chargeArray.add(Integer.toString(tr.getCharges())); // Amount charged
                                 }
 
@@ -117,7 +117,7 @@ public final class Hub implements HubInterface, AddDStationObserver, IssueMaster
                     }
 
                 },
-                Clock.getStartDate(),
+                Clock.parse("1 00:00"),
                 24,
                 0);
 
@@ -173,6 +173,7 @@ public final class Hub implements HubInterface, AddDStationObserver, IssueMaster
     }
     
     public void setCollector(EventCollector c) {
+        bankServer.setCollector(c);
         display.setCollector(c); 
         terminal.setCollector(c);
     }
