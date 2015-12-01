@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<eclipse-userlibraries>
+  <library name="lib">
+    <archive path="/Users/gvsi/Dropbox/University/Inf2c-se/BikeScheme/lib/org.hamcrest.core_1.3.0.v201303031735.jar" />
+    <archive path="/Users/gvsi/Dropbox/University/Inf2c-se/BikeScheme/lib/junit.jar" />
+  </library>
+</eclipse-userlibraries>
+

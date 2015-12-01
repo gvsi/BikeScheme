@@ -94,7 +94,7 @@ public class DSTouchScreen extends AbstractIODevice {
      *
      * @param keyId
      */
-    public void viewActivity() {
+        public void viewActivity() {
 
         viewActivityObserver.viewActivityReceived();
     }

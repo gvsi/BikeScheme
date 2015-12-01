@@ -130,10 +130,19 @@ public class DStation implements StartRegObserver, ViewActivityObserver, FindFre
         return i;
     }
 
+    /**
+     * Bridges between Hub and DPoint to get the bike docking time (when reporting fault)
+     */
     public Date getBikeDockingTime(String bikeId) { return hub.getBikeDockingTime(bikeId); }
 
+    /**
+     * Bridges between Hub and DPoint to handle bike docking
+     */
     public Bike handleDockedBike(String bikeId) { return hub.handleDockedBike(bikeId, this); }
 
+    /**
+     * Bridges between Hub and DPoint to handle key insertion
+     */
     public boolean handleKeyInserted(Bike bike, DStation dStation, String keyId) {
         return hub.handleKeyInserted(bike, dStation, keyId);
     }
