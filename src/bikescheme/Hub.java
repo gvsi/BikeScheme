@@ -82,6 +82,7 @@ public class Hub implements HubInterface, AddDStationObserver, IssueMasterKeyObs
                     @Override
                     public void processTimedNotification() {
 
+                        logger.fine("Starting charging process on the Hub.");
                         ArrayList<String> chargeArray = new ArrayList<>();
 
 
@@ -95,6 +96,11 @@ public class Hub implements HubInterface, AddDStationObserver, IssueMasterKeyObs
 
                         for (TripRecord tr : tripRecordsList){
                             if (!tr.isActive() && tr.getEndTime().after(lastMidnight.getTime())) {
+
+                                /**
+                                 *  If the user is already in the list of the ones being charged
+                                 *  just update their total amount.
+                                 */
                                 if(chargeArray.contains(tr.getUser().getName())){
                                     int userChargeIndex = chargeArray.indexOf(tr.getUser().getName()) + 2;
                                     chargeArray.set(userChargeIndex + 2, chargeArray.get(userChargeIndex) + tr.getCharges());
@@ -102,6 +108,9 @@ public class Hub implements HubInterface, AddDStationObserver, IssueMasterKeyObs
                                     chargeArray.add(tr.getUser().getName()); // User Name
                                     chargeArray.add(tr.getUser().getAuthCode()); // Bank authorisation code
                                     chargeArray.add(Integer.toString(tr.getCharges())); // Amount charged
+
+                                    logger.fine("User " + tr.getUser().getName() + " with id " +
+                                                tr.getUser().getUserId() + " is being charged.");
                                 }
 
                             }
@@ -139,21 +148,22 @@ public class Hub implements HubInterface, AddDStationObserver, IssueMasterKeyObs
 
         for (String key : dockingStationMap.keySet()) {
 
-            String status = "";
+            String status;
             if ((float)dockingStationMap.get(key).getOccupied()/dockingStationMap.get(key).getDPointCount() < 0.15) {
                 status = "LOW";
             } else if((float)dockingStationMap.get(key).getOccupied()/dockingStationMap.get(key).getDPointCount() > 0.85) {
                 status = "HIGH";
+            }else{
+                status = "OK";
             }
 
-            if (status.length() > 0) {
-                occupancyArray.add(key);
-                occupancyArray.add((Integer.toString(dockingStationMap.get(key).getEastPos())));
-                occupancyArray.add((Integer.toString(dockingStationMap.get(key).getNorthPos())));
-                occupancyArray.add(status);
-                occupancyArray.add((Integer.toString(dockingStationMap.get(key).getOccupied())));
-                occupancyArray.add((Integer.toString(dockingStationMap.get(key).getDPointCount())));
-            }
+            occupancyArray.add(key);
+            occupancyArray.add((Integer.toString(dockingStationMap.get(key).getEastPos())));
+            occupancyArray.add((Integer.toString(dockingStationMap.get(key).getNorthPos())));
+            occupancyArray.add(status);
+            occupancyArray.add((Integer.toString(dockingStationMap.get(key).getOccupied())));
+            occupancyArray.add((Integer.toString(dockingStationMap.get(key).getDPointCount())));
+
         }
 
         display.showOccupancy(occupancyArray);

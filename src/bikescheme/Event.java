@@ -132,7 +132,7 @@ public class Event {
         this.deviceInstance = deviceInstance;
         this.messageName = messageName;
         this.messageArgs = messageArgs;
-    }
+   }
     
     public Date getDate() {
         return date;

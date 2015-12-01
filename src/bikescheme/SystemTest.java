@@ -141,6 +141,19 @@ public class SystemTest {
     }
 
     /**
+     *  Run the "Add DStation" use case.
+     *  Creating two DStations and not expecting any output.
+     */
+    @Test
+    public void addDStation() {
+        logger.info("Starting test: addDStation");
+
+        input("1 07:00, HubTerminal, ht, addDStation, A,   0,   0, 20");
+        input("1 07:00, HubTerminal, ht, addDStation, B, 400, 300, 2");
+
+    }
+
+    /**
      *  Run the "Add Bike" use case.
      *
      */
@@ -167,8 +180,8 @@ public class SystemTest {
      */
         
     @Test 
-    public void showHighLowOccupancy() {
-        logger.info("Starting test: showHighLowOccupancy");
+    public void viewOccupancy() {
+        logger.info("Starting test: viewOccupancy");
 
         setupDStations();
         setupBikes();
@@ -186,7 +199,7 @@ public class SystemTest {
      * Run the "Hire Bike" use case.
      */
     @Test
-    public void startHire() {
+    public void hireBike() {
         logger.info("Starting test: HireBike");
 
         setupDStations();
@@ -256,8 +269,8 @@ public class SystemTest {
      *  Run the "View User Activity" use case.
      */
     @Test
-    public void generateUserReport() {
-        logger.info("Starting test: generateUserReport");
+    public void viewUserActivity() {
+        logger.info("Starting test: viewUserActivity");
 
         setupDStations();
         setupUsers();
@@ -288,6 +301,7 @@ public class SystemTest {
         setupTrips();
 
         input ("2 10:32, FaultButton, A.3.fb, reportFault");
+        expect("2 10:32, FaultyLight, A.3.fl,          on");
 
     }
 
@@ -324,20 +338,21 @@ public class SystemTest {
      */
     @Test
     public void chargeUser() {
-        logger.info("Starting test: findFreePoints");
+        logger.info("Starting test: chargeUser");
 
         setupDStations();
         setupUsers();
         setupBikes();
         setupTrips();
 
-        input ("2 00:00, Clock, clk, tick");
-        expect("2 00:00, HubDisplay, hd, viewOccupancy, unordered-tuples, 6,"
+        input ("3 00:00, Clock, clk, tick");
+        expect("3 00:00, HubDisplay, hd, viewOccupancy, unordered-tuples, 6,"
                 + "DSName, East, North, Status, #Occupied, #DPoints,"
-                + "     B,  400,  300,    HIGH,       2,       2");
+                + "A,         0,     0,     OK,         3,       20,"
+                + "B,       400,   300,   HIGH,         2,        2");
 
 
-        expect("2 00:00, BankServer, hbs, chargeUsers, unordered-tuples, 3,"
+        expect("3 00:00, BankServer, hbs, chargeUsers, unordered-tuples, 3,"
                 + "User Name, Bank authorisation code, Amount charged,"
                 + "    Alice,         Alice-card-auth,              5");
 

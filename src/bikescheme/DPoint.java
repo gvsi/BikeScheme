@@ -20,6 +20,7 @@ public class DPoint implements KeyInsertionObserver, BikeDockingObserver, FaultB
     private KeyReader keyReader;
     private BikeSensor bikeSensor;
     private OKLight okLight;
+    private FaultyLight faultyLight;
     private String instanceName;
     private int index;
     private Bike currentBike;
@@ -49,6 +50,8 @@ public class DPoint implements KeyInsertionObserver, BikeDockingObserver, FaultB
         bikeSensor = new BikeSensor(instanceName + ".bs");
         bikeSensor.setObserver(this);
         okLight = new OKLight(instanceName + ".ok");
+        faultyLight = new FaultyLight(instanceName + ".fl");
+
 
         this.instanceName = instanceName;
         this.index = index;
@@ -65,6 +68,7 @@ public class DPoint implements KeyInsertionObserver, BikeDockingObserver, FaultB
     
     public void setCollector(EventCollector c) {
         okLight.setCollector(c);
+        faultyLight.setCollector(c);
         bikeLock.setCollector(c);
     }
 
@@ -82,7 +86,6 @@ public class DPoint implements KeyInsertionObserver, BikeDockingObserver, FaultB
 
     /**
      * Start hire on key insertion.
-     *
      */
     public void keyInserted(String keyId) {
         if (isOccupied()) {
@@ -106,6 +109,9 @@ public class DPoint implements KeyInsertionObserver, BikeDockingObserver, FaultB
         }else{
             logger.fine("Bike " + currentBike.getBikeId() + " removed from the DPoint " + dStation.getInstanceName() + " using Master Key with id " + keyId);
             bikeLock.unlock();
+            if(faultyLight.isOn()) {
+                faultyLight.turnOff();
+            }
             okLight.flash();
             hasFaultyBike = false;
         }
@@ -117,7 +123,6 @@ public class DPoint implements KeyInsertionObserver, BikeDockingObserver, FaultB
      *  1: If it already exists it is a ReturnBike scenario
      *  2: If it does not exist it is a AddBike scenario
      */
-
     @Override
     public void bikeDocked(String bikeId) {
         logger.fine("Start docking " + bikeId + " on " + getInstanceName());
@@ -132,6 +137,10 @@ public class DPoint implements KeyInsertionObserver, BikeDockingObserver, FaultB
         }
     }
 
+    /**
+     * Whenever a fault button is pressed check if te dPoint is occupied and
+     * whether it was pressed within 2 minutes of the docking.
+     */
     @Override
     public void pressed(Date pressingTime) {
         if(isOccupied()) {
@@ -143,6 +152,7 @@ public class DPoint implements KeyInsertionObserver, BikeDockingObserver, FaultB
             if (diffMin < 2) {
                 hasFaultyBike = true;
                 logger.fine("Bike with id " + currentBike.getBikeId() + " reported as faulty on DPoint " + instanceName);
+                faultyLight.turnOn();
             } else {
                 logger.warning("Button pressed 2 minutes or more after docking.");
             }
